@@ -1,4 +1,4 @@
-classdef SurfaceScanProcessor
+classdef ProcessSurfaceScan
 	properties(Constant)
 		keyence_minimum_value = -30; % mm
 		keyence_scan_width = 60; % mm
@@ -35,4 +35,4 @@ classdef SurfaceScanProcessor
 
 		end%func ShiftScanProfileToRobotTaskSpace
 	end%static methods
-end%class SurfaceScanProcessor
+end%class ProcessSurfaceScan
