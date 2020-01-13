@@ -45,8 +45,8 @@ classdef SurfaceScan < handle
 			obj.robot_c = data.robot_c;
 			obj.voltage = data.voltage;
 			obj.current = data.current;
-			obj.weld_on = data.weld_on;
+			obj.weld_on = logical(data.weld_on);
 			obj.scan_profile = data.scan_profile;
-		end%func SurfaceScan
+		end%func Constructor
 	end%methods
 end%class SurfaceScan
