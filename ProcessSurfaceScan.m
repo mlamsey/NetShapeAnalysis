@@ -1,7 +1,8 @@
 classdef ProcessSurfaceScan
 	properties(Constant)
 		keyence_minimum_value = -30; % mm
-		keyence_scan_width = 60; % mm
+		keyence_maximum_value = 30; %mm
+		keyence_scan_width = 40; % mm
 	end%const
 
 	methods(Static)
@@ -34,5 +35,12 @@ classdef ProcessSurfaceScan
 			end%for r
 
 		end%func ShiftScanProfileToRobotTaskSpace
+
+		function DecimateScanByFactor(scan,decimation_factor)
+			field_names = fieldnames(scan);
+			for i = 1:numel(field_names)
+			    scan.(field_names{i}) = Utils.DecimateVector(scan.(field_names{i}),10);
+			end%for i
+		end%func DecimateScanByFactor
 	end%static methods
 end%class ProcessSurfaceScan

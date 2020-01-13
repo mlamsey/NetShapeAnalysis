@@ -1,4 +1,4 @@
-classdef SurfaceScan < handle
+classdef SurfaceScan < handle & matlab.mixin.Copyable
 	properties
 		time;
 		robot_x;
