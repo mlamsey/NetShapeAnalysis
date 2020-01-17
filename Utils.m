@@ -9,7 +9,7 @@ classdef Utils
 			n_entries = floor(length(old_vector) / decimation_factor);
 			new_vector = [];
 			for i = 1:n_entries
-				new_vector(i) = old_vector(i * decimation_factor);
+				new_vector(i,:) = old_vector(i * decimation_factor,:);
 			end%for i
 		end%func DecimateVector
 	end%static methods
