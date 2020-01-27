@@ -27,6 +27,7 @@ classdef PlotSurfaceScan
 				y_range = linspace(scan_y - y_offset, scan_y + y_offset, ...
 				KeyenceConst.keyence_n_points);
 				x_range = scan.robot_x(i) .* ones(KeyenceConst.keyence_n_points,1);
+				
 				plot3(x_range,y_range,scan.scan_profile(i,:),'.k',...
 					'markersize',2);
 				% pause

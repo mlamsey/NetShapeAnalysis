@@ -1,6 +1,6 @@
 classdef ProcessSurfaceScan
 	properties(Constant)
-		
+		decimated_scan_shift_index = 19;
 	end%const
 
 	methods(Static)
@@ -14,6 +14,7 @@ classdef ProcessSurfaceScan
 			ProcessSurfaceScan.CoerceOutOfRangeProfileValues(scan);
 			ProcessSurfaceScan.ShiftScanProfileToRobotTaskSpace(scan);
 			ProcessSurfaceScan.FilterByWeldOn(scan);
+			ProcessSurfaceScan.ShiftScanByPoints(scan,ProcessSurfaceScan.decimated_scan_shift_index);
 		end%func StandardCleanup
 
 		function CoerceOutOfRangeProfileValues(scan)
@@ -68,5 +69,18 @@ classdef ProcessSurfaceScan
 		    	scan.(field_names{i}) = current_field(logical_index,:);
 			end%for i
 		end%func FilterByWeldOn
+
+		function ShiftScanByPoints(scan,n_points)
+			field_names = fieldnames(scan);
+			for i = 1:numel(field_names)
+				if(~strcmp(field_names{i},'scan_profile'))
+					original_field = scan.(field_names{i});
+					scan.(field_names{i}) = original_field(n_points:end);
+				else
+					original_field = scan.scan_profile;
+					scan.scan_profile = scan.scan_profile(1:end-n_points + 1,:);
+				end%if
+			end%for i
+		end%fund ShiftScanByPoints
 	end%static methods
 end%class ProcessSurfaceScan
