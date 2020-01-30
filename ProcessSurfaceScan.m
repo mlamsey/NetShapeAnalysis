@@ -1,6 +1,6 @@
 classdef ProcessSurfaceScan
 	properties(Constant)
-		decimated_scan_shift_index = 19;
+		decimated_scan_shift_index = 20;
 	end%const
 
 	methods(Static)
@@ -15,6 +15,7 @@ classdef ProcessSurfaceScan
 			ProcessSurfaceScan.ShiftScanProfileToRobotTaskSpace(scan);
 			ProcessSurfaceScan.FilterByWeldOn(scan);
 			ProcessSurfaceScan.ShiftScanByPoints(scan,ProcessSurfaceScan.decimated_scan_shift_index);
+			ProcessSurfaceScan.RemoveScanOverlaps(scan);
 		end%func StandardCleanup
 
 		function CoerceOutOfRangeProfileValues(scan)
@@ -101,6 +102,39 @@ classdef ProcessSurfaceScan
 				end%if
 			end%for i
 		end%func ShiftScanByPoints
+
+		function RemoveScanOverlaps(scan)
+			if(~isa(scan,'SurfaceScan'))
+				fprintf('ProcessSurfaceScan::RemoveScanOverlaps: Input not a SurfaceScan\n');
+				return;
+			end%if
+
+			% Find gaps between scans using change in y
+			delta_y = abs(diff(scan.robot_y));
+			logical_index = delta_y > 2 * mean(delta_y);
+			scan_flags = [1;find(logical_index);length(scan.robot_y)];
+
+			y_offset = KeyenceConst.keyence_scan_width / 2;
+
+			for i = 2:length(scan_flags) - 1
+
+				previous_scan_index_range = scan_flags(i-1):scan_flags(i);
+				previous_average_y = mean(scan.robot_y(previous_scan_index_range));
+				previous_y_min = previous_average_y - y_offset;
+
+				current_scan_index_range = scan_flags(i):scan_flags(i+1);
+				current_average_y = mean(scan.robot_y(current_scan_index_range));
+				current_y_range = linspace(current_average_y - y_offset,current_average_y + y_offset,KeyenceConst.keyence_n_points);
+				current_logical_index = current_y_range < previous_y_min + 4.3;
+
+				for j = 1:length(current_scan_index_range)
+					scan_index = current_scan_index_range(j);
+					scan.scan_profile(scan_index,~current_logical_index) = NaN;
+				end%for j
+
+			end%for i
+			
+		end%func RemoveScanOverlaps
 
 		function [x_vector,y_vector,z_vector] = GetScanProfileAtIndex(scan,index)
 			if(~isa(scan,'SurfaceScan'))

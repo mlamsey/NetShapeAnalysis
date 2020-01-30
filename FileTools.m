@@ -27,11 +27,10 @@ classdef FileTools
 				[x,y,z] = ProcessSurfaceScan.GetScanProfileAtIndex(scan,i);
 
 				for j = 1:length(x)
-					x_str = num2str(x(j),'%1.3f');
-					y_str = num2str(y(j),'%1.3f');
-					z_str = num2str(z(j),'%1.3f');
-
 					if(~isnan(z(j)))
+						x_str = num2str(x(j),'%1.3f');
+						y_str = num2str(y(j),'%1.3f');
+						z_str = num2str(z(j),'%1.3f');
 						scan_string = strcat(x_str,',',y_str,',',z_str,'\n');
 						fprintf(file_id,scan_string);
 					end%if
