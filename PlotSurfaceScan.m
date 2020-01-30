@@ -22,14 +22,8 @@ classdef PlotSurfaceScan
 			hold on;
 
 			for i = 1:length(scan.scan_profile(:,1))
-				scan_y = scan.robot_y(i);
-				y_offset = KeyenceConst.keyence_scan_width / 2;
-				y_range = linspace(scan_y - y_offset, scan_y + y_offset, ...
-				KeyenceConst.keyence_n_points);
-				x_range = scan.robot_x(i) .* ones(KeyenceConst.keyence_n_points,1);
-				
-				plot3(x_range,y_range,scan.scan_profile(i,:),'.k',...
-					'markersize',2);
+				[x,y,z] = ProcessSurfaceScan.GetScanProfileAtIndex(scan,i);
+				plot3(x,y,z,'.k','markersize',2);
 				% pause
 			end%for i
 			hold off;

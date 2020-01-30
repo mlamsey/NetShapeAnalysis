@@ -48,6 +48,15 @@ classdef ProcessSurfaceScan
 		end%func ShiftScanProfileToRobotTaskSpace
 
 		function DecimateScanByFactor(scan,decimation_factor)
+			if(~isa(scan,'SurfaceScan'))
+				fprintf('ProcessSurfaceScan::DecimateScanByFactor: Input 1 not a SurfaceScan\n');
+				return;
+			end%if
+
+			if(decimation_factor > length(scan.robot_x))
+				fprintf('ProcessSurfaceScan::DecimateScanByFactor: Decimation factor larger than scan length!\n');
+			end%if
+
 			field_names = fieldnames(scan);
 			for i = 1:numel(field_names)
 				original_class = class(scan.(field_names{i}));
@@ -61,6 +70,11 @@ classdef ProcessSurfaceScan
 		end%func DecimateScanByFactor
 
 		function FilterByWeldOn(scan)
+			if(~isa(scan,'SurfaceScan'))
+				fprintf('ProcessSurfaceScan::FilterByWeldOn: Input not a SurfaceScan\n');
+				return;
+			end%if
+
 			logical_index = scan.weld_on;
 
 			field_names = fieldnames(scan);
@@ -71,6 +85,11 @@ classdef ProcessSurfaceScan
 		end%func FilterByWeldOn
 
 		function ShiftScanByPoints(scan,n_points)
+			if(~isa(scan,'SurfaceScan'))
+				fprintf('ProcessSurfaceScan::ShiftScanByPoints: Input not a SurfaceScan\n');
+				return;
+			end%if
+
 			field_names = fieldnames(scan);
 			for i = 1:numel(field_names)
 				if(~strcmp(field_names{i},'scan_profile'))
@@ -81,6 +100,25 @@ classdef ProcessSurfaceScan
 					scan.scan_profile = scan.scan_profile(1:end-n_points + 1,:);
 				end%if
 			end%for i
-		end%fund ShiftScanByPoints
+		end%func ShiftScanByPoints
+
+		function [x_vector,y_vector,z_vector] = GetScanProfileAtIndex(scan,index)
+			if(~isa(scan,'SurfaceScan'))
+				fprintf('ProcessSurfaceScan::GetScanProfileAtIndex: Input not a SurfaceScan\n');
+				x_vector = [];
+				y_vector = [];
+				z_vector = [];
+				return;
+			end%if
+
+			scan_y = scan.robot_y(index);
+			y_offset = KeyenceConst.keyence_scan_width / 2;
+			y_vector = linspace(scan_y - y_offset, scan_y + y_offset, ...
+			KeyenceConst.keyence_n_points);
+
+			x_vector = scan.robot_x(index) .* ones(KeyenceConst.keyence_n_points,1);
+
+			z_vector = scan.scan_profile(index,:);
+		end%func GetScanProfileAtIndex
 	end%static methods
 end%class ProcessSurfaceScan
