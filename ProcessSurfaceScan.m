@@ -111,13 +111,11 @@ classdef ProcessSurfaceScan
 
 			% Find gaps between scans using change in y
 			delta_y = abs(diff(scan.robot_y));
-			logical_index = delta_y > 2 * mean(delta_y);
+			logical_index = delta_y > 4 * mean(delta_y);
 			scan_flags = [1;find(logical_index);length(scan.robot_y)];
-
 			y_offset = KeyenceConst.keyence_scan_width / 2;
 
 			for i = 2:length(scan_flags) - 1
-
 				previous_scan_index_range = scan_flags(i-1):scan_flags(i);
 				previous_average_y = mean(scan.robot_y(previous_scan_index_range));
 				previous_y_min = previous_average_y - y_offset;
@@ -125,7 +123,7 @@ classdef ProcessSurfaceScan
 				current_scan_index_range = scan_flags(i):scan_flags(i+1);
 				current_average_y = mean(scan.robot_y(current_scan_index_range));
 				current_y_range = linspace(current_average_y - y_offset,current_average_y + y_offset,KeyenceConst.keyence_n_points);
-				current_logical_index = current_y_range < previous_y_min + 4.3;
+				current_logical_index = current_y_range < (previous_y_min + 4.3); % weird offset idk
 
 				for j = 1:length(current_scan_index_range)
 					scan_index = current_scan_index_range(j);
