@@ -7,7 +7,7 @@ classdef PlotSurfaceScan
 		function axes_ref = Plot(scan)
 			if(~isa(scan,'SurfaceScan'))
 				fprintf('PlotSurfaceScan::Plot: Input not a Surface Scan\n');
-				axes_ref = null;
+				axes_ref = null(1);
 				return;
 			end%if
 

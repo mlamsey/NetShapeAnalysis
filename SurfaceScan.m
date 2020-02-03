@@ -1,5 +1,6 @@
 classdef SurfaceScan < handle & matlab.mixin.Copyable
 	properties
+		file_path;
 		time;
 		robot_x;
 		robot_y;
@@ -36,6 +37,7 @@ classdef SurfaceScan < handle & matlab.mixin.Copyable
 	methods
 		function obj = SurfaceScan(file_path)
 			data = SurfaceScan.LoadSurfaceScanFromFile(file_path);
+			obj.file_path = file_path;
 			obj.time = data.time;
 			obj.robot_x = data.robot_x;
 			obj.robot_y = data.robot_y;

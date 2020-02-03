@@ -1,13 +1,25 @@
 classdef GOMSurfaceComparison < handle & matlab.mixin.Copyable
 	properties
-		points;
+		file_path;
+		x;
+		y;
+		z;
+		dx;
+		dy;
+		dz;
+		dev;
 	end%properties
 	methods
 		function obj = GOMSurfaceComparison(file_path)
 			[x,y,z,dx,dy,dz,dev] = FileTools.ImportGOMComparison(file_path);
-			for i = 1:length(x)
-				obj.points{i} = GOMSurfaceComparisonPoint(x(i),y(i),z(i),dx(i),dy(i),dz(i),dev(i));
-			end%for i
+			obj.file_path = file_path;
+			obj.x = x;
+			obj.y = y;
+			obj.z = z;
+			obj.dx = dx;
+			obj.dy = dy;
+			obj.dz = dz;
+			obj.dev = dev;
 		end%Constructor
 	end%methods
 end%class GOMSurfaceComparison
