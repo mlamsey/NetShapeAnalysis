@@ -40,6 +40,17 @@ classdef FileTools
 			fprintf('Done!\n\n');
 
 			fclose(file_id);
-		end%func
-	end%Static Methodsi
+		end%func WriteScanToCSV
+
+		function [x,y,z,dx,dy,dz,dev] = ImportGOMComparison(file_path)
+			raw_data = dlmread(file_path,' ',0,0);
+            x = raw_data(:,1);
+            y = raw_data(:,2);
+            z = raw_data(:,3);
+            dx = raw_data(:,4);
+            dy = raw_data(:,5);
+            dz = raw_data(:,6);
+            dev = raw_data(:,7);
+		end%func ImportGOMComparison
+	end%Static Methods
 end%class FileTools
