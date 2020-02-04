@@ -1,6 +1,6 @@
 function [dz_sigma_list,name_list] = AnalyzeSurfaceRoughness(directory_path)
 	close all;
-	% Get directory information
+    % Get directory information
     dir_info = dir(directory_path);
     n_files = length(dir_info);
 
@@ -26,9 +26,15 @@ function [dz_sigma_list,name_list] = AnalyzeSurfaceRoughness(directory_path)
 
             dz_normalized = dz - mean(dz);
             figure;
-            histogram(dz_normalized,20);
+            histogram(dz_normalized,100);
             title(file_name);
             xlabel('Deviation from Average (mm)');
+            x_lim = max(abs(xlim));
+            xlim([-1*x_lim,x_lim]);
+
+            % disp(file_name);
+            % disp(fitdist(dz_normalized,'Normal'));
+            % fprintf('\n\n');
 
             % Save Data
             dz_sigma_list(file_i) = std(dz_normalized);
