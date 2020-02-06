@@ -12,7 +12,7 @@ classdef FileTools
 
 			file_id = fopen(file_path,'w');
 			if(file_id == -1)
-				fprintf('PathFileWriter::Write: File failed to open.\n');
+				fprintf('FileTools::WriteScanToCSV: File failed to open.\n');
 				return;
 			end%if
 
