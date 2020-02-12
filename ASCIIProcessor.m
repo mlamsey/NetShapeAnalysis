@@ -38,6 +38,8 @@ classdef ASCIIProcessor
 				fprintf(file_id,point_string);
 			end%for i
 
+			fclose(file_id);
+
 			fprintf('File written in %1.2f seconds\n',toc);
 		end%func DecimateASCII
 	end%methods
