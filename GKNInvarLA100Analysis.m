@@ -48,60 +48,98 @@ n_angles = length(d_degree_overhang(abs(d_degree_overhang) > 0)) + 1;
 mean_vector = zeros(1,n_angles);
 stddev_vector = zeros(1,n_angles);
 
-f = figure;
-% hold on;
+% f_angles = figure;
+% % hold on;
 
-for i = 1:n_angles
-	current_angle = angles(i);
-	subset_indices = indices(i):indices(i+1);
+% for i = 1:n_angles
+% 	current_angle = angles(i);
+% 	subset_indices = indices(i):indices(i+1);
 	
-	layer_height_subset = layer_height_vector(subset_indices);
+% 	layer_height_subset = layer_height_vector(subset_indices);
 
-	indices_within_layers_of_interest = g.y > min(layer_height_subset) & g.y < max(layer_height_subset);
+% 	indices_within_layers_of_interest = g.y > min(layer_height_subset) & g.y < max(layer_height_subset);
 
-	deviation_subset = g.dev(indices_within_layers_of_interest);
+% 	deviation_subset = g.dev(indices_within_layers_of_interest);
 
-	% angle_subset = current_angle .* ones(1,length(deviation_subset));
-	% plot(angle_subset,deviation_subset,'.');
-	% plot(current_angle,std(deviation_subset),'.');
-	mean_vector(i) = mean(deviation_subset);
-	stddev_vector(i) = std(deviation_subset);
+% 	% angle_subset = current_angle .* ones(1,length(deviation_subset));
+% 	% plot(angle_subset,deviation_subset,'.');
+% 	% plot(current_angle,std(deviation_subset),'.');
+% 	mean_vector(i) = mean(deviation_subset);
+% 	stddev_vector(i) = std(deviation_subset);
+% end%for i
+
+% % Plot Average !
+% subplot(2,2,1)
+% hold on;
+% plot(angles(1:2),mean_vector(1:2),'g');
+% plot(angles(2:end),mean_vector(2:end),'k');
+% hold off;
+% grid on;
+% xlabel('Angle (Degrees)');
+% ylabel('Avg Deviation of Surface Deviation (mm)');
+% title('mean(deviation) vs Torch Angle');
+% line([min(xlim),max(xlim)],[0,0],'color','k');
+
+% subplot(2,2,3)
+% plot(layer_height_vector(indices(1:end-1)),mean_vector,'k');
+% grid on;
+% xlabel('Build Height Progression (mm)');
+% ylabel('Avg of Surface Deviation (mm)');
+% title('mean(deviation) vs Build Progression');
+% line([min(xlim),max(xlim)],[0,0],'color','k');
+
+% % Plot stddev !!
+% subplot(2,2,2)
+% hold on;
+% plot(angles(1:2),stddev_vector(1:2),'g');
+% plot(angles(2:end),stddev_vector(2:end),'k');
+% hold off;
+% grid on;
+% xlabel('Angle (Degrees)');
+% ylabel('stddev Deviation of Surface Deviation (mm)');
+% title('std(deviation) vs Torch Angle');
+
+% subplot(2,2,4)
+% plot(layer_height_vector(indices(1:end-1)),stddev_vector,'k');
+% grid on;
+% xlabel('Build Height Progression (mm)');
+% ylabel('stddev of Surface Deviation (mm)');
+% title('std(deviation) vs Build Progression');
+
+% Layer-wise Analysis
+
+layer_mean_vector = zeros(1,n_layers - 1);
+layer_stddev_vector = layer_mean_vector;
+
+for i = 1:n_layers - 1
+	layer_subset_indices = g.y > layer_height_vector(i) & g.y < layer_height_vector(i + 1);
+	deviation_subset = g.dev(layer_subset_indices);
+
+	layer_mean_vector(i) = mean(deviation_subset);
+	layer_stddev_vector(i) = std(deviation_subset);
+
+	if(i == 1)
+		layer_1_deviation = deviation_subset;
+	end%if
 end%for i
 
-% Plot Average !
-subplot(2,2,1)
-hold on;
-plot(angles(1:2),mean_vector(1:2),'g');
-plot(angles(2:end),mean_vector(2:end),'k');
-hold off;
-grid on;
-xlabel('Angle (Degrees)');
-ylabel('Avg Deviation of Surface Deviation (mm)');
-title('mean(deviation) vs Torch Angle');
-line([min(xlim),max(xlim)],[0,0],'color','k');
+f_layer = figure;
 
-subplot(2,2,3)
-plot(layer_height_vector(indices(1:end-1)),mean_vector,'k');
+subplot(1,2,1)
+plot(1:n_layers - 1,layer_mean_vector);
+xlabel('Layer Number');
+ylabel('Mean Deviation');
+title('Mean Deviation');
 grid on;
-xlabel('Build Height Progression (mm)');
-ylabel('Avg of Surface Deviation (mm)');
-title('mean(deviation) vs Build Progression');
-line([min(xlim),max(xlim)],[0,0],'color','k');
 
-% Plot stddev !!
-subplot(2,2,2)
-hold on;
-plot(angles(1:2),stddev_vector(1:2),'g');
-plot(angles(2:end),stddev_vector(2:end),'k');
-hold off;
+subplot(1,2,2)
+plot(1:n_layers - 1,layer_stddev_vector);
+xlabel('Layer Number');
+ylabel('stddev');
+title('stddev Deviation');
 grid on;
-xlabel('Angle (Degrees)');
-ylabel('stddev Deviation of Surface Deviation (mm)');
-title('std(deviation) vs Torch Angle');
 
-subplot(2,2,4)
-plot(layer_height_vector(indices(1:end-1)),stddev_vector,'k');
-grid on;
-xlabel('Build Height Progression (mm)');
-ylabel('stddev of Surface Deviation (mm)');
-title('std(deviation) vs Build Progression');
+% % Refined
+% f_trend = figure;
+% plot(angles,stddev_vector,'ko');
+% grid on;
