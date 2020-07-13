@@ -53,23 +53,35 @@ for i = 1:n_layers - 1
 	layer_roughness_matrix(7,i) = SurfaceRoughnessCalculations.Rku(deviation_subset);
 	layer_roughness_matrix(8,i) = SurfaceRoughnessCalculations.RzJIS(deviation_subset);
 
-	length(deviation_subset)
+	% length(deviation_subset)
 end%for i
 
 plot_labels = {'Ra - Arithmetic Mean','Rq - RMS','Rv - Deepest Valley','Rp - Highest Peak','Rz - Max Height','Rsk - Skewness','Rku - Kurtosis','RzJIS - Max Height JIS'};
 angle_labels = {'0','10','20','30','35','30','20','10','0','-10','-20','-30','-35','-30','-20','-10','0'};
 
-for i = 8:8
-	% subplot(2,4,i)
-	hold on;
-	for j = 1:length(indices)-1
-		index_subset = indices(j):indices(j+1);
-		plot(index_subset,layer_roughness_matrix(i,index_subset));
-	end%for j
-	ylabel('Metric (mm)');
-	xlabel('Layer Number');
-	title(plot_labels{i});
-	grid on;
-	legend(angle_labels);
-	hold off;
+% for i = 2:2
+% 	% subplot(2,4,i)
+% 	hold on;
+% 	for j = 1:length(indices)-1
+% 		index_subset = indices(j):indices(j+1);
+% 		plot(index_subset,layer_roughness_matrix(i,index_subset));
+% 	end%for j
+% 	ylabel('Metric (mm)');
+% 	xlabel('Layer Number');
+% 	title(plot_labels{i});
+% 	grid on;
+% 	legend(angle_labels);
+% 	hold off;
+% end%for i
+
+ascending_length = floor(length(angles) / 2);
+avgs = zeros(1,ascending_length);
+% return
+
+for i = 1:ascending_length
+	index_subset = indices(i):indices(i+1);
+	avgs(i) = mean(layer_roughness_matrix(2,index_subset));
 end%for i
+
+plot(abs(angles(1:ascending_length)),avgs)
+
