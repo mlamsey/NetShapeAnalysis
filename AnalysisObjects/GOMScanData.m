@@ -1,4 +1,4 @@
-classdef GOMScanSubset
+classdef GOMScanData
 	properties
 		x;
 		y;
@@ -9,7 +9,7 @@ classdef GOMScanSubset
 		dev;
 	end%properties
 	methods
-		function obj = GOMScanSubset(x,y,z,dx,dy,dz,dev)
+		function obj = GOMScanData(x,y,z,dx,dy,dz,dev)
 			obj.x = x;
 			obj.y = y;
 			obj.z = z;
