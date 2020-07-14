@@ -1,4 +1,4 @@
-classdef GOMScanData
+classdef GOMScanData < handle
 	properties
 		x;
 		y;

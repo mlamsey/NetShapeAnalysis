@@ -4,11 +4,24 @@ classdef ScanMethods
 	end%properties
 	
 	methods(Static)
+		function SwitchScanDataAxes(scan_data,axis_label_1,axis_label_2)
+			if(~isa(scan_data,'GOMScanData'))
+				fprintf('ScanMethods::SwitchScanDataAxes: Input 1 not a GOMScanData\n');
+				return;
+			end%if
+
+			axis_1 = ScanMethods.GetAxis(scan_data,axis_label_1);
+			axis_2 = ScanMethods.GetAxis(scan_data,axis_label_2);
+
+			ScanMethods.SetAxis(scan_data,axis_label_1,axis_2);
+			ScanMethods.SetAxis(scan_data,axis_label_2,axis_1);
+
+		end%func SwitchScanDataAxes
 		
 		function scan_data_subset = GetScanDataSubsetInRange(scan_data,coordinate_axis,axis_min,axis_max)
 			if(~isa(scan_data,'GOMScanData'))
 				fprintf('ScanMethods::GetScanDataSubsetInRange: Input 1 not a GOMScanData\n');
-				scan_data_subset = [];
+				scan_data_subset = scan_data;
 				return;
 			end%if
 
@@ -25,6 +38,24 @@ classdef ScanMethods
 				subset_dx,subset_dy,subset_dz,subset_dev);
 
 		end%func GetScanDataSubsetInRange
+
+		function RemovePointsOutsideOfDeviationRange(scan_data,deviation_min,deviation_max)
+			if(~isa(scan_data,'GOMScanData'))
+				fprintf('ScanMethods::RemovePointsOutsideOfDeviationRange: Input 1 not a GOMScanData\n');
+				scan_data_subset = scan_data;
+				return;
+			end%if
+
+			points_to_keep = scan_data.dev >= deviation_min & scan_data.dev <= deviation_max;
+			scan_data.x = scan_data.x(points_to_keep);
+			scan_data.y = scan_data.y(points_to_keep);
+			scan_data.z = scan_data.z(points_to_keep);
+			scan_data.dx = scan_data.dx(points_to_keep);
+			scan_data.dy = scan_data.dy(points_to_keep);
+			scan_data.dz = scan_data.dz(points_to_keep);
+			scan_data.dev = scan_data.dev(points_to_keep);
+
+		end%func RemovePointsOutsideOfDeviationRange
 
 	end%static methods
 
@@ -60,5 +91,43 @@ classdef ScanMethods
 					logical_indices = [];
 			end%switch
 		end%func GetIndicesForPositionRange
+
+		function axis_values = GetAxis(scan_data,axis_name)
+			switch axis_name
+				case 'x'
+					axis_values = scan_data.x;
+				case 'X'
+					axis_values = scan_data.x;
+				case 'y'
+					axis_values = scan_data.y;
+				case 'Y'
+					axis_values = scan_data.y;
+				case 'z'
+					axis_values = scan_data.z;
+				case 'Z'
+					axis_values = scan_data.z;
+				otherwise
+					fprintf('ScanMethods::GetAxis: Invalid Axis Name\n');
+			end%switch
+		end%func GetAxis
+
+		function SetAxis(scan_data,axis_name,values)
+			switch axis_name
+				case 'x'
+					scan_data.x = values;
+				case 'X'
+					scan_data.x = values;
+				case 'y'
+					scan_data.y = values;
+				case 'Y'
+					scan_data.y = values;
+				case 'z'
+					scan_data.z = values;
+				case 'Z'
+					scan_data.z = values;
+				otherwise
+					fprintf('ScanMethods::SetAxis: Invalid axis name\n');
+			end%switch
+		end%func SetAxis
 	end%private methods
 end%class ScanMethods

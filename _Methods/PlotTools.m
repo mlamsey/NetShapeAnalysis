@@ -5,6 +5,20 @@ classdef PlotTools
 	end%const
 
 	methods(Static)
+
+		function PlotScanPoints(scan_data)
+			if(~isa(scan_data,'GOMScanData'))
+				fprintf('PlotTools::PlotScanPoints: Input not a GOMScanData\n');
+				return;
+			end%if
+
+			plot3(scan_data.x,scan_data.y,scan_data.z,'k.');
+			xlabel('X (mm)');
+			ylabel('Y (mm)');
+			zlabel('Z (mm)');
+
+		end%func PlotScanPoints
+
 		function SquareAxes(axes_ref)
 			x_lim = xlim(axes_ref);
 			y_lim = ylim(axes_ref);

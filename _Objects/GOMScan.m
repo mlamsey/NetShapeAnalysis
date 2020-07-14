@@ -1,4 +1,4 @@
-classdef GOMScan
+classdef GOMScan < handle
 	properties
 		data;
 		file_path;
