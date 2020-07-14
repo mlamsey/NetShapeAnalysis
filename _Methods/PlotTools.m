@@ -14,20 +14,20 @@ classdef PlotTools
 			ylim(axes_ref,[min_bound,max_bound]);
 		end%func SquareAxes
 
-		function histogram_ref = PlotSurfaceDeviationHistogram(surface_comparison)
-			if(~isa(surface_comparison,'GOMSurfaceComparison'))
-				fprintf('PlotTools::PlotSurfaceDeviationHistogram: Input not a GOMSurfaceComparison\n');
+		function histogram_ref = PlotSurfaceDeviationHistogram(scan_data)
+			if(~isa(scan_data,'GOMScanData'))
+				fprintf('PlotTools::PlotSurfaceDeviationHistogram: Input not a GOMScanData\n');
 				histogram_ref = [];
 				return;
 			end%if
 
 			% Extract metrics
-			avg = mean(surface_comparison.dev);
-			stddev = std(surface_comparison.dev);
+			avg = mean(scan_data.dev);
+			stddev = std(scan_data.dev);
 
 			% Plot
 			f = figure('Position',[300,300,700,500]);
-			histogram_ref = histogram(surface_comparison.dev,PlotTools.number_of_histogram_bins);
+			histogram_ref = histogram(scan_data.dev,PlotTools.number_of_histogram_bins);
 			average_line = line([avg,avg],[min(ylim),max(ylim)],'color','k',...
 				'linestyle','--');
 
