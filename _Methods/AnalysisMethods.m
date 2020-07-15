@@ -5,6 +5,9 @@ classdef AnalysisMethods
 
 	methods(Static)
 		function Rz = GetLayerRz(scan,z_min,z_max)
+			if(~isa(scan,'GOMScan'))
+				fprintf('AnalysisMethods::GetLayerRz: Input 1 not a GOMScan\n');
+			end%if
 			data = scan.data;
 			subset = ScanMethods.GetScanDataSubsetInRange(data,'z',z_min,z_max);
 			Rz = SurfaceRoughnessCalculations.Rz(subset.dev);
@@ -12,7 +15,7 @@ classdef AnalysisMethods
 
 		function LA100LayerRzAnalysis(scan)
 			if(~isa(scan,'GOMScan'))
-				fprintf('AnalysisMethods::LA100LayerRzAnalysis: Input not a scan\n');
+				fprintf('AnalysisMethods::LA100LayerRzAnalysis: Input not a GOMScan\n');
 				return;
 			end%func LA100LayerRzAnalysis
 

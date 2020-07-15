@@ -5,7 +5,22 @@ classdef FileTools
 
 	methods(Static)
 
+		function scan = PromptForScanImport
+            msg = questdlg('Please select a file containing a scan from GOM','INFO','OK','OK');
+            [file_path,directory] = uigetfile;
+            file_path = strcat(directory,file_path);
+
+            if(~file_path)
+                fprintf('FileTools::PromptForPartImportFromGOM: No file selected!\n');
+                scan = [];
+            else
+                scan = GOMScan(file_path);
+            end%if
+
+        end%func PromptForPartImportFromGOM
+
 		function [x,y,z,dx,dy,dz,dev] = ImportGOMComparison(file_path)
+			file_path
 			raw_data = dlmread(file_path,' ',0,0);
             x = raw_data(:,1);
             y = raw_data(:,2);
