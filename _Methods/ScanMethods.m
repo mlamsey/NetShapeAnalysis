@@ -17,6 +17,18 @@ classdef ScanMethods
 			ScanMethods.SetAxis(scan_data,axis_label_2,axis_1);
 
 		end%func SwitchScanDataAxes
+
+		function TranslateScanDataToOrigin(scan_data)
+			if(~isa(scan_data,'GOMScanData'))
+				fprintf('ScanMethods::TranslateScanDataToOrigin: Input not a GOMScanData\n');
+				return;
+			end%if
+
+			scan_data.x = scan_data.x - min(scan_data.x);
+			scan_data.y = scan_data.y - min(scan_data.y);
+			scan_data.z = scan_data.z - min(scan_data.z);
+			
+		end%func TranslateScanDataToOrigin
 		
 		function scan_data_subset = GetScanDataSubsetInRange(scan_data,coordinate_axis,axis_min,axis_max)
 			if(~isa(scan_data,'GOMScanData'))

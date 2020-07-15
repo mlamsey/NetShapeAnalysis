@@ -12,21 +12,35 @@ classdef PlotTools
 				return;
 			end%if
 
-			plot3(scan_data.x,scan_data.y,scan_data.z,'k.');
+			a = axes;
+			plot3(scan_data.x,scan_data.y,scan_data.z,'k.','parent',a);
 			xlabel('X (mm)');
 			ylabel('Y (mm)');
 			zlabel('Z (mm)');
+			grid on;
+			PlotTools.SquareAxes3(a);
 
 		end%func PlotScanPoints
 
-		function SquareAxes(axes_ref)
+		function SquareAxes2(axes_ref)
 			x_lim = xlim(axes_ref);
 			y_lim = ylim(axes_ref);
 			min_bound = min([x_lim,y_lim]);
 			max_bound = max([x_lim,y_lim]);
 			xlim(axes_ref,[min_bound,max_bound]);
 			ylim(axes_ref,[min_bound,max_bound]);
-		end%func SquareAxes
+		end%func SquareAxes2
+
+		function SquareAxes3(axes_ref)
+			x_lim = xlim(axes_ref);
+			y_lim = ylim(axes_ref);
+			z_lim = zlim(axes_ref);
+			min_bound = min([x_lim,y_lim,z_lim]);
+			max_bound = max([x_lim,y_lim,z_lim]);
+			xlim(axes_ref,[min_bound,max_bound]);
+			ylim(axes_ref,[min_bound,max_bound]);
+			zlim(axes_ref,[min_bound,max_bound]);
+		end%func SquareAxes3
 
 		function histogram_ref = PlotSurfaceDeviationHistogram(scan_data)
 			if(~isa(scan_data,'GOMScanData'))
