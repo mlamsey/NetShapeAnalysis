@@ -57,7 +57,23 @@ classdef SurfaceRoughnessCalculations
 		function R_zJIS = RzJIS(deviation_vector)
 			[sorted_deviation,old_indices] = sort(deviation_vector);
 
-			sample_length = floor(0.01*length(deviation_vector));
+			if(length(sorted_deviation) < 5)
+				R_zJIS = SurfaceRoughnessCalculations.Rz(sorted_deviation);
+				return;
+			end%if
+
+			minima = abs(sorted_deviation(1:5));
+			maxima = abs(sorted_deviation(end-4:end));
+
+			R_zJIS = (1/5) * (sum(maxima) + sum(minima));
+
+		end%func RzJIS
+
+		function R_zJIS = RzPercent(deviation_vector,percentage)
+			[sorted_deviation,old_indices] = sort(deviation_vector);
+			percentage = 0.01;
+
+			sample_length = floor(percentage*length(deviation_vector));
 
 			minima = abs(sorted_deviation(1:sample_length));
 			maxima = sorted_deviation(end-(sample_length-1):end);
