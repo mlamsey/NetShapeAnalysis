@@ -37,6 +37,7 @@ classdef TestMethods
 			% Looking at square 2D windows in the XZ Plane
 			roughness_values = zeros(n_z_points,n_x_points);
 			n_windows_without_points = 0;
+			Rz_threshold = 4;
 
 			for i = 1:n_z_points
 				z_min = z_steps(i);
@@ -54,11 +55,13 @@ classdef TestMethods
 						Rz = 0;
 						n_windows_without_points = n_windows_without_points + 1;
 					else
-						Rz = SurfaceRoughnessCalculations.Rz(xz_subset.dev);
+						Rz = SurfaceRoughnessCalculations.Rsk(xz_subset.dev);
 					end%if
 
-					if(Rz > 2)
-						Rz = 2;
+					if(Rz > Rz_threshold)
+						Rz = Rz_threshold;
+					elseif(Rz < -1 * Rz_threshold)
+						Rz = -1 * Rz_threshold;
 					end%if
 
 					roughness_values(i,j) = Rz;
@@ -67,6 +70,16 @@ classdef TestMethods
 			end%for i
 			fprintf('%i of %i windows contain no points.\n',n_windows_without_points,n_x_points * n_z_points);
 			varargout = {roughness_values};
+
+			% Plot
+			f = figure('position',[100,100,1000,800]);
+			a = axes('parent',f);
+			surf(flip(x_steps(1:end-1)),z_steps(1:end-1),roughness_values,'parent',a);
+			shading interp;
+			colormap jet;
+			colorbar;
+			view(0,90);
+			PlotTools.SquareAxes2(a);
 
 		end%func TestSquareWindows
 	end%static methods
