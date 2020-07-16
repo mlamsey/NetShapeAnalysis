@@ -1,5 +1,12 @@
 classdef SurfaceRoughnessCalculations
 	methods(Static)
+		function avg = Mean(deviation_vector)
+			avg = mean(deviation_vector);
+		end%func Mean
+
+		function stddev = Stddev(deviation_vector)
+			stddev = std(deviation_vector);
+		end%func Stddev
 
 		function R_a = Ra(deviation_vector)
 			% Arithmetical mean

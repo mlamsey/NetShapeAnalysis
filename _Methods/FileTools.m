@@ -20,7 +20,6 @@ classdef FileTools
         end%func PromptForPartImportFromGOM
 
 		function [x,y,z,dx,dy,dz,dev] = ImportGOMComparison(file_path)
-			file_path
 			raw_data = dlmread(file_path,' ',0,0);
             x = raw_data(:,1);
             y = raw_data(:,2);

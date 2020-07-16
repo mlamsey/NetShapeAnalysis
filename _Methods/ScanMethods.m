@@ -27,8 +27,34 @@ classdef ScanMethods
 			scan_data.x = scan_data.x - min(scan_data.x);
 			scan_data.y = scan_data.y - min(scan_data.y);
 			scan_data.z = scan_data.z - min(scan_data.z);
-			
+
 		end%func TranslateScanDataToOrigin
+
+		function scan_data_window = GetScanDataSubsetInWindow(scan_data,axis_1,axis_1_range,axis_2,axis_2_range)
+			if(~isa(scan_data,'GOMScanData'))
+				fprintf('ScanMethods::GetScanDataSubsetInWindow: Input 1 not a GOMScanData\n');
+				scan_data_window = [];
+				return;
+			end%if
+
+			if(length(axis_1_range) ~= 2)
+				fprintf('ScanMethods::GetScanDataSubsetInWindow: Input 3 not length 2\n');
+				scan_data_window = [];
+				return;
+			end%if
+
+			if(length(axis_2_range) ~= 2)
+				fprintf('ScanMethods::GetScanDataSubsetInWindow: Input 5 not length 2\n');
+				scan_data_window = [];
+				return;
+			end%if
+
+			intermediate_susbet = ScanMethods.GetScanDataSubsetInRange(scan_data,axis_1,...
+				axis_1_range(1),axis_1_range(2));
+			scan_data_window = ScanMethods.GetScanDataSubsetInRange(intermediate_susbet,axis_2,...
+				axis_2_range(1),axis_2_range(2));
+
+		end%func GetScanDataSubsetInWindow
 		
 		function scan_data_subset = GetScanDataSubsetInRange(scan_data,coordinate_axis,axis_min,axis_max)
 			if(~isa(scan_data,'GOMScanData'))
