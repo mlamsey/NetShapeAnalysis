@@ -5,6 +5,36 @@ classdef AnalysisMethods
 
 	methods(Static)
 
+		function metric_value = QueryMetric(data,metric_string)
+			switch metric_string
+				case 'Mean'
+					metric_value = SurfaceRoughnessCalculations.Mean(data);
+				case 'Stddev'
+					metric_value = SurfaceRoughnessCalculations.Stddev(data);
+				case 'Ra'
+					metric_value = SurfaceRoughnessCalculations.Ra(data);
+				case 'Rq'
+					metric_value = SurfaceRoughnessCalculations.Rq(data);
+				case 'Rv'
+					metric_value = SurfaceRoughnessCalculations.Rv(data);
+				case 'Rp'
+					metric_value = SurfaceRoughnessCalculations.Rp(data);
+				case 'Rz'
+					metric_value = SurfaceRoughnessCalculations.Rz(data);
+				case 'Rsk'
+					metric_value = SurfaceRoughnessCalculations.Rsk(data);
+				case 'Rku'
+					metric_value = SurfaceRoughnessCalculations.Rku(data);
+				case 'RzJIS'
+					metric_value = SurfaceRoughnessCalculations.RzJIS(data);
+				case 'RzPercent'
+					metric_value = SurfaceRoughnessCalculations.RzPercent(data);
+				otherwise
+					fprintf('AnalysisMethods::QueryMetric: Input metric string not recognized.\n');
+					metric_value = [];
+			end%switch
+		end%func QueryMetric
+
 		function metric_vector = GetMetricForEachLayer(scan,metric_string,layer_height)
 
 			part_height = max(scan.data.z) - min(scan.data.z);
@@ -25,7 +55,7 @@ classdef AnalysisMethods
 			end%if
 			data = scan.data;
 			subset = ScanMethods.GetScanDataSubsetInRange(data,'z',z_min,z_max);
-			Rz = SurfaceRoughnessCalculations.Rz(subset.dev);
+			metric = AnalysisMethods.QueryMetric(subset.dev,metric_string);
 		end%func GetLayerRz
 
 		function LA100LayerRzAnalysis(scan)
@@ -60,36 +90,6 @@ classdef AnalysisMethods
 	end%static methods
 
 	methods(Static, Access = 'private')
-		function metric_value = QueryMetric(data,metric_string)
-			switch metric_string
-				case 'Mean'
-					metric_value = SurfaceRoughnessCalculations.Mean(data);
-				case 'Stddev'
-					metric_value = SurfaceRoughnessCalculations.Stddev(data);
-				case 'Ra'
-					metric_value = SurfaceRoughnessCalculations.Ra(data);
-				case 'Rq'
-					metric_value = SurfaceRoughnessCalculations.Rq(data);
-				case 'Rv'
-					metric_value = SurfaceRoughnessCalculations.Rv(data);
-				case 'Rp'
-					metric_value = SurfaceRoughnessCalculations.Rp(data);
-				case 'Rz'
-					metric_value = SurfaceRoughnessCalculations.Rz(data);
-				case 'Rsk'
-					metric_value = SurfaceRoughnessCalculations.Rsk(data);
-				case 'Rku'
-					metric_value = SurfaceRoughnessCalculations.Rku(data);
-				case 'RzJIS'
-					metric_value = SurfaceRoughnessCalculations.RzJIS(data);
-				case 'RzPercent'
-					metric_value = SurfaceRoughnessCalculations.RzPercent(data);
-				otherwise
-					fprintf('AnalysisMethods::QueryMetric: Input metric string not recognized.\n');
-					metric_value = [];
-			end%switch
-		end%func QueryMetric
-
 		function layer_height_vector = GetLayerHeightVector(scan_data,number_of_layers)
 			if(~isa(scan_data,'GOMScanData'))
 				fprintf('AnalysisMethods::GetLayerHeightVector: Input 1 not a GOMScanData\n');

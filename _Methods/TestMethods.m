@@ -13,7 +13,7 @@ classdef TestMethods
 			data = scan.data;
 		end%func TestWindowSizes
 
-		function varargout = TestSquareWindows(scan,window_length_mm)
+		function varargout = TestSquareWindows(scan,metric_string,window_length_mm)
 			if(~isa(scan,'GOMScan'))
 				fprintf('TestMethods::TestSquareWindows: Input 1 not a GOMScan\n');
 				varargout = [];
@@ -55,7 +55,7 @@ classdef TestMethods
 						metric = 0;
 						n_windows_without_points = n_windows_without_points + 1;
 					else
-						metric = SurfaceRoughnessCalculations.RzJIS(xz_subset.dev);
+						metric = AnalysisMethods.QueryMetric(xz_subset.dev,metric_string);
 					end%if
 
 					if(metric > metric_threshold)
@@ -73,18 +73,18 @@ classdef TestMethods
 			varargout = {roughness_values};
 
 			% Plot
-			f = figure('position',[100,100,1000,800]);
+			f = figure('position',[100,100,400,800]);
 			a = axes('parent',f);
 			surf(flip(x_steps(1:end-1)),z_steps(1:end-1),roughness_values,'parent',a);
 			shading interp;
 			colormap jet;
 			colorbar;
 			view(0,90);
-			PlotTools.SquareAxes2(a);
+			xlim([0,250]);
 
 		end%func TestSquareWindows
 
-		function varargout = TestRectangularWindows(scan,window_height_mm,window_length_mm)
+		function varargout = TestRectangularWindows(scan,metric_string,window_height_mm,window_length_mm)
 			if(~isa(scan,'GOMScan'))
 				fprintf('TestMethods::TestRectangularWindows: Input 1 not a GOMScan\n');
 				varargout = [];
@@ -105,7 +105,7 @@ classdef TestMethods
 			% Looking at square 2D windows in the XZ Plane
 			roughness_values = zeros(n_z_points,n_x_points);
 			n_windows_without_points = 0;
-			metric_threshold = 0.5;
+			metric_threshold = 5;
 
 			for i = 1:n_z_points
 				z_min = z_steps(i);
@@ -123,7 +123,7 @@ classdef TestMethods
 						metric = 0;
 						n_windows_without_points = n_windows_without_points + 1;
 					else
-						metric = SurfaceRoughnessCalculations.Stddev(xz_subset.dev);
+						metric = AnalysisMethods.QueryMetric(xz_subset.dev,metric_string);
 					end%if
 
 					if(metric > metric_threshold)
@@ -141,14 +141,14 @@ classdef TestMethods
 			varargout = {roughness_values};
 
 			% Plot
-			f = figure('position',[100,100,1000,800]);
+			f = figure('position',[100,100,400,800]);
 			a = axes('parent',f);
 			surf(flip(x_steps(1:end-1)),z_steps(1:end-1),roughness_values,'parent',a);
 			shading interp;
 			colormap jet;
 			colorbar;
 			view(0,90);
-			PlotTools.SquareAxes2(a);
+			xlim([0,250]);
 
 		end%func TestRectangularWindows
 	end%static methods
