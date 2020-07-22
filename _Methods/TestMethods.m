@@ -149,6 +149,9 @@ classdef TestMethods
 			colorbar;
 			view(0,90);
 			xlim([0,250]);
+			xlabel('X (mm)');
+			ylabel('Z (mm)');
+			title(sprintf('%s for %1.2fmm x %1.2fmm Window',metric_string,window_length_mm,window_height_mm));
 
 		end%func TestRectangularWindows
 	end%static methods

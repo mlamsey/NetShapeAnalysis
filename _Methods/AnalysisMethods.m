@@ -6,29 +6,35 @@ classdef AnalysisMethods
 	methods(Static)
 
 		function metric_value = QueryMetric(data,metric_string)
+			if(isa(data,'GOMScanData'))
+				deviation_vector = data.dev;
+			else
+				deviation_vector = data;
+			end%if
+			
 			switch metric_string
 				case 'Mean'
-					metric_value = SurfaceRoughnessCalculations.Mean(data);
+					metric_value = SurfaceRoughnessCalculations.Mean(deviation_vector);
 				case 'Stddev'
-					metric_value = SurfaceRoughnessCalculations.Stddev(data);
+					metric_value = SurfaceRoughnessCalculations.Stddev(deviation_vector);
 				case 'Ra'
-					metric_value = SurfaceRoughnessCalculations.Ra(data);
+					metric_value = SurfaceRoughnessCalculations.Ra(deviation_vector);
 				case 'Rq'
-					metric_value = SurfaceRoughnessCalculations.Rq(data);
+					metric_value = SurfaceRoughnessCalculations.Rq(deviation_vector);
 				case 'Rv'
-					metric_value = SurfaceRoughnessCalculations.Rv(data);
+					metric_value = SurfaceRoughnessCalculations.Rv(deviation_vector);
 				case 'Rp'
-					metric_value = SurfaceRoughnessCalculations.Rp(data);
+					metric_value = SurfaceRoughnessCalculations.Rp(deviation_vector);
 				case 'Rz'
-					metric_value = SurfaceRoughnessCalculations.Rz(data);
+					metric_value = SurfaceRoughnessCalculations.Rz(deviation_vector);
 				case 'Rsk'
-					metric_value = SurfaceRoughnessCalculations.Rsk(data);
+					metric_value = SurfaceRoughnessCalculations.Rsk(deviation_vector);
 				case 'Rku'
-					metric_value = SurfaceRoughnessCalculations.Rku(data);
+					metric_value = SurfaceRoughnessCalculations.Rku(deviation_vector);
 				case 'RzJIS'
-					metric_value = SurfaceRoughnessCalculations.RzJIS(data);
+					metric_value = SurfaceRoughnessCalculations.RzJIS(deviation_vector);
 				case 'RzPercent'
-					metric_value = SurfaceRoughnessCalculations.RzPercent(data);
+					metric_value = SurfaceRoughnessCalculations.RzPercent(deviation_vector);
 				otherwise
 					fprintf('AnalysisMethods::QueryMetric: Input metric string not recognized.\n');
 					metric_value = [];
@@ -56,7 +62,7 @@ classdef AnalysisMethods
 			data = scan.data;
 			subset = ScanMethods.GetScanDataSubsetInRange(data,'z',z_min,z_max);
 			metric = AnalysisMethods.QueryMetric(subset.dev,metric_string);
-		end%func GetLayerRz
+		end%func GetLayerMetric
 
 		function LA100LayerRzAnalysis(scan)
 			if(~isa(scan,'GOMScan'))
