@@ -71,16 +71,17 @@ if(recalc) % specify in workspace whether to recalculate stuff
 
 	% ===== Extract Initial Data ===== %
 	data = s.data;
+	x_window_size = 1 * layer_height;
 
 	x_range = [min(data.x),max(data.x)];
 	y_range = [min(data.y),max(data.y)];
 	z_range = [min(data.z),max(data.z)];
 
-	n_x_points = ceil((x_range(2) - x_range(1)) / layer_height);
+	n_x_points = ceil((x_range(2) - x_range(1)) / x_window_size);
 	n_y_points = ceil((y_range(2) - y_range(1)) / layer_height);
 	n_z_points = ceil((z_range(2) - z_range(1)) / layer_height);
 
-	x_steps = x_range(1) : layer_height : (x_range(1) + (n_x_points * layer_height));
+	x_steps = x_range(1) : x_window_size : (x_range(1) + (n_x_points * x_window_size));
 	y_steps = y_range(1) : layer_height : (y_range(1) + (n_y_points * layer_height));
 	z_steps = z_range(1) : layer_height : (z_range(1) + (n_z_points * layer_height));
 
@@ -104,7 +105,7 @@ if(recalc) % specify in workspace whether to recalculate stuff
 	top_of_part = z_range(2);
 	bottom_of_part = top_of_part - (n_layers * layer_height);
 	layer_height_vector = linspace(bottom_of_part,top_of_part,n_layers);
-	n_x_windows = ceil((x_range(2) - x_range(1)) / layer_height);
+	n_x_windows = ceil((x_range(2) - x_range(1)) / x_window_size);
 
 	% ===== Overhang ===== %
 	% Based on slice plan
@@ -204,29 +205,22 @@ if(recalc) % specify in workspace whether to recalculate stuff
 		metric_averages(i) = mean(metric_subset);
 	end%for i
 
-	% ga_angles = angles
-	% nga_angles = -1 .* angles
-	% nga_angles(1:9,end) = 1
-	% abs_angles = [0,10,20,30,35];
-	% metric_ga_averages = zeros(1,length(abs_angles));
-	% metric_nga_averages = metric_ga_averages;
-	% for i = 1:length(abs_angles)
-	% 	ga_subset = ga_angles == abs_angles(i);
-	% 	nga_subset = nga_angles == abs_angles(i);
-	% 	metric_ga_averages(i) = mean(metric_averages(ga_subset));
-	% 	metric_nga_averages(i) = mean(metric_averages(nga_subset));
-	% end%for i
 	ga_angles = [0,10,20,30,35];
 	nga_angles = [-10,-20,-30,-35];
 	metric_ga_averages = zeros(1,length(ga_angles));
+	metric_ga_stddev = metric_ga_averages;
 	metric_nga_averages = zeros(1,length(nga_angles));
+	metric_nga_stddev = metric_nga_averages;
+
 	for i = 1:length(ga_angles)
 		subset_indices = degree_overhang == ga_angles(i);
 		metric_ga_averages(i) = mean(metric_values(subset_indices));
+		metric_ga_stddev(i) = std(metric_values(subset_indices));
 	end%for i
 	for i = 1:length(nga_angles)
 		subset_indices = degree_overhang == nga_angles(i);
 		metric_nga_averages(i) = mean(metric_values(subset_indices));
+		metric_nga_stddev(i) = std(metric_values(subset_indices));
 	end%for i
 end%if recalc
 
@@ -234,7 +228,8 @@ end%if recalc
 angle_labels = {'0','10','20','30','35','30','20','10','0','-10','-20','-30','-35','-30','-20','-10','0'};
 
 fprintf('Plotting...\n');
-f1 = figure;
+f = figure('position',[0,0,1400,800]);
+subplot(2,2,1)
 hold on;
 % Plot by layer - using angle change flags
 for i = 1:length(overhang_change_flags) - 1
@@ -262,25 +257,46 @@ hold off;
 grid on;
 
 % plot by angle
-f2 = figure;
+subplot(2,2,3)
 hold on;
-% ascending
-ascending_points = 1:9;
-plot(abs(angles(ascending_points)),metric_averages(ascending_points),'k-o');
-% descending
-descending_points = 10:length(angles);
-plot(abs(angles(descending_points)),metric_averages(descending_points),'r-o');
+% GA
+ga_points = [1:9,length(angles)];
+plot(abs(angles(ga_points)),metric_averages(ga_points),'k-o');
+% NGA
+nga_points = 10:length(angles)-1;
+plot(abs(angles(nga_points)),metric_averages(nga_points),'r-o');
 hold off;
 grid on;
-legend('GA Stair Step','NGA Stair Step');
+legend('GA Slope','NGA Overhang');
 title(metric_string);
 xlabel('Layer Number');
 ylabel('Metric Value');
 
-f3 = figure;
+subplot(2,2,4)
 hold on;
-plot(ga_angles,metric_ga_averages,'k-o');
-plot(abs(nga_angles),metric_nga_averages,'r-o');
+% GA
+ascending_ga_points = [1:5];
+% descending_ga_points = [6:9,length(angles)];
+descending_ga_points = 6:9;
+plot(abs(angles(ascending_ga_points)),metric_averages(ascending_ga_points),'k-o');
+plot(abs(angles(descending_ga_points)),metric_averages(descending_ga_points),'r-o');
+% NGA
+increasing_nga_points = 10:13;
+decreasing_nga_points = 14:length(angles)-1;
+plot(abs(angles(increasing_nga_points)),metric_averages(increasing_nga_points),'g-o');
+plot(abs(angles(decreasing_nga_points)),metric_averages(decreasing_nga_points),'m-o');
+hold off;
+grid on;
+legend('GA Increasing Slope','GA Decreasing Slope','NGA Increasing Overhang','NGA Degreasing Overhang');
+title(metric_string);
+xlabel('Layer Number');
+ylabel('Metric Value');
+
+% Error bars
+subplot(2,2,2)
+hold on;
+errorbar(ga_angles,metric_ga_averages,metric_ga_stddev,'k-o');
+errorbar(abs(nga_angles),metric_nga_averages,metric_nga_stddev,'r-o');
 hold off;
 grid on;
 legend('GA Slope','NGA Overhang');
