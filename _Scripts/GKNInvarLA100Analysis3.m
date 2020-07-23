@@ -2,6 +2,11 @@
 % Performed after meeting with Dr. Hamel
 % Intent: look into subsets of the build which are steady-state
 % Intent: distill data into easily digestible charts and metrics
+
+% matt's file_path = /Users/mlamsey/Documents/MATLAB/welding/NetShapeAnalysis/Scans
+% front = [P] LA100 Full Res Center Front.asc
+% back = [P] LA100 Full Res Center Back.asc
+
 close all;
 
 if(~exist('recalc','var'))
@@ -21,8 +26,34 @@ if(recalc) % specify in workspace whether to recalculate stuff
 	% ===== Build Flags ===== %
 	layer_overnight_pause = 169;
 	replaced_layer = 251;
-	% layer #, joint #, mm search
-	dynamic_load_errors = [193,1,0
+	% layer #, error position (see figure), mm search
+	dynamic_load_errors = [39,6,0
+						42,2,0
+						61,3,0
+						75,6,0
+						82,2,0
+						86,6,0
+						88,1,0
+						89,6,0
+						90,6,0
+						91,3,0
+						92,1,0
+						94,1,0
+						95,6,0
+						96,1,0
+						97,6,0
+						102,2,0
+						103,2,0
+						107,1,0
+						109,6,0
+						110,2,0
+						112,2,0
+						113,1,0
+						116,6,0
+						117,1,0
+						118,1,0
+						124,1,0
+						193,1,0
 						205,1,0
 						207,1,-3.25
 						211,6,-3.8
@@ -55,6 +86,19 @@ if(recalc) % specify in workspace whether to recalculate stuff
 
 	n_layers = length(z_steps) - 1;
 	fprintf('Scan contains %i layers\n',n_layers);
+
+	% Recalculate build flags
+	if(n_layers ~= n_deposited_layers)
+		layer_shift = (n_deposited_layers - n_layers);
+		fprintf('Number of scanned layers (%i) ~= number of deposited layers (%i)\nShifting irregularity flags by %i layers\n',...
+			n_layers,n_deposited_layers,layer_shift);
+
+		dynamic_load_errors(:,1) = dynamic_load_errors(:,1) - layer_shift;
+		dynamic_load_layers = dynamic_load_errors(:,1);
+		fin_error_start = fin_error_start - layer_shift;
+		fin_error_end = fin_error_end - layer_shift;
+		collision_layer = collision_layer - layer_shift;
+	end%if
 
 	% Get part geometry
 	top_of_part = z_range(2);
@@ -93,6 +137,7 @@ if(recalc) % specify in workspace whether to recalculate stuff
 
 	% Recalculate degree_overhang
 	if(n_layers ~= n_deposited_layers)
+		fprintf('Shifting degree overhang changes by %i layers\n',layer_shift);
 		degree_overhang = degree_overhang((n_deposited_layers - n_layers):end);
 	end%if
 
@@ -106,9 +151,9 @@ if(recalc) % specify in workspace whether to recalculate stuff
 
 	% ===== Analysis ===== %
 	metric_values = zeros(1,n_layers);
-	metric_string = 'Rz';
+	metric_string = 'Stddev';
 
-	fprintf('Calculating %s for:\n',metric_string);
+	fprintf('\nCalculating %s for:\n',metric_string);
 	for i = 1:n_layers
 		fprintf('%i \\ %i layer',i,n_layers);
 		z_min = z_steps(i);
@@ -166,9 +211,14 @@ end%for i
 % plot dynamic load errors
 plot(dynamic_load_layers,metric_values(dynamic_load_layers),'ko');
 
+% plot start/stop line
+line([layer_overnight_pause,layer_overnight_pause],[min(ylim),max(ylim)],'color','k','linestyle','--');
+
 % legend
 legend_labels = angle_labels;
 legend_labels{end + 1} = 'Dynamic Load Errors';
+legend_labels{end + 1} = 'Overnight Stop';
+
 legend(legend_labels,'location','eastoutside','orientation','vertical');
 title(metric_string);
 xlabel('Layer Number');
