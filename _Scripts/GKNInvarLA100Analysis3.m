@@ -150,6 +150,7 @@ if(recalc) % specify in workspace whether to recalculate stuff
 	overhang_change_flags(end+1) = length(degree_overhang) - 1;
 
 	% ===== Analysis ===== %
+	% ----- Layer-wise ----- %
 	metric_values = zeros(1,n_layers);
 	metric_string = 'Stddev';
 
@@ -192,16 +193,50 @@ if(recalc) % specify in workspace whether to recalculate stuff
 		end%if
 	end%for i
 	recalc = false;
+
+	% ----- Angle-wise ----- %
+	angles = [0,10,20,30,35,30,20,10,0,-10,-20,-30,-35,-30,-20,-10,0];
+
+	metric_averages = zeros(1,length(overhang_change_flags) - 1);
+	for i = 1:length(metric_averages)
+		index_range = (overhang_change_flags(i) : overhang_change_flags(i + 1)) + layer_end_offset;
+		metric_subset = metric_values(index_range);
+		metric_averages(i) = mean(metric_subset);
+	end%for i
+
+	% ga_angles = angles
+	% nga_angles = -1 .* angles
+	% nga_angles(1:9,end) = 1
+	% abs_angles = [0,10,20,30,35];
+	% metric_ga_averages = zeros(1,length(abs_angles));
+	% metric_nga_averages = metric_ga_averages;
+	% for i = 1:length(abs_angles)
+	% 	ga_subset = ga_angles == abs_angles(i);
+	% 	nga_subset = nga_angles == abs_angles(i);
+	% 	metric_ga_averages(i) = mean(metric_averages(ga_subset));
+	% 	metric_nga_averages(i) = mean(metric_averages(nga_subset));
+	% end%for i
+	ga_angles = [0,10,20,30,35];
+	nga_angles = [-10,-20,-30,-35];
+	metric_ga_averages = zeros(1,length(ga_angles));
+	metric_nga_averages = zeros(1,length(nga_angles));
+	for i = 1:length(ga_angles)
+		subset_indices = degree_overhang == ga_angles(i);
+		metric_ga_averages(i) = mean(metric_values(subset_indices));
+	end%for i
+	for i = 1:length(nga_angles)
+		subset_indices = degree_overhang == nga_angles(i);
+		metric_nga_averages(i) = mean(metric_values(subset_indices));
+	end%for i
 end%if recalc
 
 % ===== Plotting ===== %
-angles = [0,10,20,30,35,30,20,10,0,-10,-20,-30,-35,-30,-20,-10,0];
 angle_labels = {'0','10','20','30','35','30','20','10','0','-10','-20','-30','-35','-30','-20','-10','0'};
 
 fprintf('Plotting...\n');
-
+f1 = figure;
 hold on;
-% Plot by angle
+% Plot by layer - using angle change flags
 for i = 1:length(overhang_change_flags) - 1
 	index_range = (overhang_change_flags(i) : overhang_change_flags(i + 1)) + layer_end_offset;
 	metric_subset = metric_values(index_range);
@@ -225,4 +260,32 @@ xlabel('Layer Number');
 ylabel('Metric Value');
 hold off;
 grid on;
+
+% plot by angle
+f2 = figure;
+hold on;
+% ascending
+ascending_points = 1:9;
+plot(abs(angles(ascending_points)),metric_averages(ascending_points),'k-o');
+% descending
+descending_points = 10:length(angles);
+plot(abs(angles(descending_points)),metric_averages(descending_points),'r-o');
+hold off;
+grid on;
+legend('GA Stair Step','NGA Stair Step');
+title(metric_string);
+xlabel('Layer Number');
+ylabel('Metric Value');
+
+f3 = figure;
+hold on;
+plot(ga_angles,metric_ga_averages,'k-o');
+plot(abs(nga_angles),metric_nga_averages,'r-o');
+hold off;
+grid on;
+legend('GA Slope','NGA Overhang');
+title(strcat(metric_string,{' '},'vs Slope Angle'));
+xlabel('Slope Angle [Degrees]');
+ylabel('Metric Value [ f(mm) ]');
+
 
