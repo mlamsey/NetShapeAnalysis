@@ -2,131 +2,152 @@
 % Performed after meeting with Dr. Hamel
 % Intent: look into subsets of the build which are steady-state
 % Intent: distill data into easily digestible charts and metrics
+close all;
 
-clearvars -except s;
+if(~exist('recalc','var'))
+	recalc = true;
+end%if
 
-% ===== Build Parameters ===== %
-n_deposited_layers = 296; % from slicer
-layer_height = 2.31; % mm - from GOM analysis
+if(recalc) % specify in workspace whether to recalculate stuff
+	clearvars -except s;
 
-% ===== Build Flags ===== %
-layer_overnight_pause = 169;
-replaced_layer = 251;
-% layer #, joint #, mm search
-dynamic_load_errors = [193,1,0
-					205,1,0
-					207,1,-3.25
-					211,6,-3.8
-					212,6,-4
-					213,1,-4.7
-					223,1,-3
-					244,6,-4.5
-					247,1,-3.84];
+	% ===== Build Parameters ===== %
+	n_deposited_layers = 296; % from slicer
+	layer_height = 2.31; % mm - from GOM analysis
 
-dynamic_load_layers = dynamic_load_errors(:,1);
+	% ===== Analysis Parameters ===== %
+	layer_end_offset = 10;
 
-fin_error_start = 243;
-fin_error_end = 250;
-collision_layer = 274; % required tcp recalibration, fins reprinted
+	% ===== Build Flags ===== %
+	layer_overnight_pause = 169;
+	replaced_layer = 251;
+	% layer #, joint #, mm search
+	dynamic_load_errors = [193,1,0
+						205,1,0
+						207,1,-3.25
+						211,6,-3.8
+						212,6,-4
+						213,1,-4.7
+						223,1,-3
+						244,6,-4.5
+						247,1,-3.84];
 
-% ===== Overhang ===== %
-% Based on slice plan
+	dynamic_load_layers = dynamic_load_errors(:,1);
 
-% DEGREE OVERHANG
-degree_overhang = zeros(1,n_deposited_layers); % layer-wise
+	fin_error_start = 243;
+	fin_error_end = 250;
+	collision_layer = 274; % required tcp recalibration, fins reprinted
 
-% Assign hard-coded torch angle values for NGA sections
-degree_overhang(1:34) = 0;
-degree_overhang(35:36) = 10;
-degree_overhang(37:41) = 20;
-degree_overhang(42:46) = 30;
-degree_overhang(47:82) = 35;
-degree_overhang(83:103) = 30;
-degree_overhang(104:128) = 20;
-degree_overhang(129:139) = 10;
-degree_overhang(140:163) = 0;
-degree_overhang(164:175) = -10;
-degree_overhang(176:200) = -20;
-degree_overhang(201:223) = -30;
-degree_overhang(224:257) = -35;
-degree_overhang(258:262) = -30;
-degree_overhang(263:267) = -20;
-degree_overhang(268:269) = -10;
-degree_overhang(270:end) = 0;
+	% ===== Extract Initial Data ===== %
+	data = s.data;
 
-% Generate flags for changing degree overhang
-d_degree_overhang = diff(degree_overhang);
-overhang_change_flags = 1:length(d_degree_overhang);
-overhang_change_flags = overhang_change_flags(abs(d_degree_overhang) > 0);
-overhang_change_flags(2:end+1) = overhang_change_flags(1:end);
-overhang_change_flags(1) = 1;
-overhang_change_flags(end+1) = length(degree_overhang) - 1;
+	x_range = [min(data.x),max(data.x)];
+	y_range = [min(data.y),max(data.y)];
+	z_range = [min(data.z),max(data.z)];
 
-% ===== Extract Initial Data ===== %
-data = s.data;
+	n_x_points = ceil((x_range(2) - x_range(1)) / layer_height);
+	n_y_points = ceil((y_range(2) - y_range(1)) / layer_height);
+	n_z_points = ceil((z_range(2) - z_range(1)) / layer_height);
 
-x_range = [min(data.x),max(data.x)];
-y_range = [min(data.y),max(data.y)];
-z_range = [min(data.z),max(data.z)];
+	x_steps = x_range(1) : layer_height : (x_range(1) + (n_x_points * layer_height));
+	y_steps = y_range(1) : layer_height : (y_range(1) + (n_y_points * layer_height));
+	z_steps = z_range(1) : layer_height : (z_range(1) + (n_z_points * layer_height));
 
-n_x_points = ceil((x_range(2) - x_range(1)) / layer_height);
-n_y_points = ceil((y_range(2) - y_range(1)) / layer_height);
-n_z_points = ceil((z_range(2) - z_range(1)) / layer_height);
+	n_layers = length(z_steps) - 1;
+	fprintf('Scan contains %i layers\n',n_layers);
 
-x_steps = x_range(1) : layer_height : (x_range(1) + (n_x_points * layer_height));
-y_steps = y_range(1) : layer_height : (y_range(1) + (n_y_points * layer_height));
-z_steps = z_range(1) : layer_height : (z_range(1) + (n_z_points * layer_height));
+	% Get part geometry
+	top_of_part = z_range(2);
+	bottom_of_part = top_of_part - (n_layers * layer_height);
+	layer_height_vector = linspace(bottom_of_part,top_of_part,n_layers);
+	n_x_windows = ceil((x_range(2) - x_range(1)) / layer_height);
 
-n_layers = length(z_steps) - 1;
-fprintf('Scan contains %i layers\n',n_layers);
+	% ===== Overhang ===== %
+	% Based on slice plan
 
-% Get part geometry
-top_of_part = z_range(2);
-bottom_of_part = top_of_part - (n_layers * layer_height);
-layer_height_vector = linspace(bottom_of_part,top_of_part,n_layers);
-n_x_windows = ceil((x_range(2) - x_range(1)) / layer_height);
+	% DEGREE OVERHANG
+	degree_overhang = zeros(1,n_deposited_layers); % layer-wise
 
-% ===== Analysis ===== %
-Rz_values = zeros(1,n_layers);
+	% Assign hard-coded torch angle values for NGA sections
+	degree_overhang(1:34) = 0;
+	degree_overhang(35:36) = 10;
+	degree_overhang(37:41) = 20;
+	degree_overhang(42:46) = 30;
+	degree_overhang(47:82) = 35;
+	degree_overhang(83:103) = 30;
+	degree_overhang(104:128) = 20;
+	degree_overhang(129:139) = 10;
+	degree_overhang(140:163) = 0;
+	degree_overhang(164:175) = -10;
+	degree_overhang(176:200) = -20;
+	degree_overhang(201:223) = -30;
+	degree_overhang(224:257) = -35;
+	degree_overhang(258:262) = -30;
+	degree_overhang(263:267) = -20;
+	degree_overhang(268:269) = -10;
+	degree_overhang(270:end) = 0;
 
-fprintf('Calculating metrics for:\n');
-for i = 1:n_layers
-	fprintf('%i \\ %i layer',i,n_layers);
-	z_min = z_steps(i);
-	z_max = z_steps(i + 1);
+	% Layer subset range
+	degree_overhang_inside_range = layer_end_offset + 1:(n_deposited_layers - layer_end_offset);
+	degree_overhang = degree_overhang(degree_overhang_inside_range);
 
-	z_subset = ScanMethods.GetScanDataSubsetInRange(data,'z',z_min,z_max);
-	Rz_temp = zeros(1,n_x_windows);
-
-	for j = 1:n_x_windows
-		x_min = x_steps(j);
-		x_max = x_steps(j + 1);
-
-		data_subset = ScanMethods.GetScanDataSubsetInRange(z_subset,'x',x_min,x_max);
-		
-		if(length(data_subset.dev) > 0)
-			Rz_temp(j) = AnalysisMethods.QueryMetric(data_subset,'Rz');
-		else
-			Rz_temp(j) = 0;
-		end%if
-
-	end%for j
-
-	Rz_values(i) = mean(Rz_temp);
-
-	% Backspace progress
-	if(i ~= n_layers)
-		if(i < 10)
-			fprintf('\b\b\b\b\b\b\b\b\b\b\b\b\b');
-		elseif(i < 100)
-			fprintf('\b\b\b\b\b\b\b\b\b\b\b\b\b\b');
-		elseif(i < 1000)
-			fprintf('\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b');
-		end%if
-	else
-		fprintf('\nDone!\n\n');
+	% Recalculate degree_overhang
+	if(n_layers ~= n_deposited_layers)
+		degree_overhang = degree_overhang((n_deposited_layers - n_layers):end);
 	end%if
-end%for i
+
+	% Generate flags for changing degree overhang
+	d_degree_overhang = diff(degree_overhang);
+	overhang_change_flags = 1:length(d_degree_overhang);
+	overhang_change_flags = overhang_change_flags(abs(d_degree_overhang) > 0);
+	overhang_change_flags(2:end+1) = overhang_change_flags(1:end);
+	overhang_change_flags(1) = 1;
+	overhang_change_flags(end+1) = length(degree_overhang) - 1;
+
+	% ===== Analysis ===== %
+	metric_values = zeros(1,n_layers);
+	metric_string = 'Rz';
+
+	fprintf('Calculating %s for:\n',metric_string);
+	for i = 1:n_layers
+		fprintf('%i \\ %i layer',i,n_layers);
+		z_min = z_steps(i);
+		z_max = z_steps(i + 1);
+
+		z_subset = ScanMethods.GetScanDataSubsetInRange(data,'z',z_min,z_max);
+		metric_temp = zeros(1,n_x_windows);
+
+		for j = 1:n_x_windows
+			x_min = x_steps(j);
+			x_max = x_steps(j + 1);
+
+			data_subset = ScanMethods.GetScanDataSubsetInRange(z_subset,'x',x_min,x_max);
+			
+			if(length(data_subset.dev) > 0)
+				metric_temp(j) = AnalysisMethods.QueryMetric(data_subset,metric_string);
+			else
+				metric_temp(j) = 0;
+			end%if
+
+		end%for j
+
+		metric_values(i) = mean(metric_temp);
+
+		% Backspace progress
+		if(i ~= n_layers)
+			if(i < 10)
+				fprintf('\b\b\b\b\b\b\b\b\b\b\b\b\b');
+			elseif(i < 100)
+				fprintf('\b\b\b\b\b\b\b\b\b\b\b\b\b\b');
+			elseif(i < 1000)
+				fprintf('\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b');
+			end%if
+		else
+			fprintf('\nDone!\n\n');
+		end%if
+	end%for i
+	recalc = false;
+end%if recalc
 
 % ===== Plotting ===== %
 angles = [0,10,20,30,35,30,20,10,0,-10,-20,-30,-35,-30,-20,-10,0];
@@ -134,11 +155,24 @@ angle_labels = {'0','10','20','30','35','30','20','10','0','-10','-20','-30','-3
 
 fprintf('Plotting...\n');
 
-plot(Rz_values);
-
+hold on;
 % Plot by angle
-% hold on;
-% for i = 1:length(overhang_change_flags) - 1
-% 	plot()
-% end%for i
-% hold off;
+for i = 1:length(overhang_change_flags) - 1
+	index_range = (overhang_change_flags(i) : overhang_change_flags(i + 1)) + layer_end_offset;
+	metric_subset = metric_values(index_range);
+	plot(index_range,metric_subset);
+end%for i
+
+% plot dynamic load errors
+plot(dynamic_load_layers,metric_values(dynamic_load_layers),'ko');
+
+% legend
+legend_labels = angle_labels;
+legend_labels{end + 1} = 'Dynamic Load Errors';
+legend(legend_labels,'location','eastoutside','orientation','vertical');
+title(metric_string);
+xlabel('Layer Number');
+ylabel('Metric Value');
+hold off;
+grid on;
+

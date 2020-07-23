@@ -8,6 +8,10 @@ classdef SurfaceRoughnessCalculations
 			stddev = std(deviation_vector);
 		end%func Stddev
 
+		function stderr = Stderr(deviation_vector)
+			stderr = std(deviation_vector) / length(deviation_vector);
+		end%func Stderr
+
 		function R_a = Ra(deviation_vector)
 			% Arithmetical mean
 			R_a = mean(abs(deviation_vector));

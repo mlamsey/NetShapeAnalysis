@@ -12,28 +12,32 @@ classdef AnalysisMethods
 				deviation_vector = data;
 			end%if
 			
+			metric_string = lower(metric_string);
+			
 			switch metric_string
-				case 'Mean'
+				case 'mean'
 					metric_value = SurfaceRoughnessCalculations.Mean(deviation_vector);
-				case 'Stddev'
+				case 'stddev'
 					metric_value = SurfaceRoughnessCalculations.Stddev(deviation_vector);
-				case 'Ra'
+				case 'stderr'
+					metric_value = SurfaceRoughnessCalculations.Stderr(deviation_vector);
+				case 'ra'
 					metric_value = SurfaceRoughnessCalculations.Ra(deviation_vector);
-				case 'Rq'
+				case 'rq'
 					metric_value = SurfaceRoughnessCalculations.Rq(deviation_vector);
-				case 'Rv'
+				case 'rv'
 					metric_value = SurfaceRoughnessCalculations.Rv(deviation_vector);
-				case 'Rp'
+				case 'rp'
 					metric_value = SurfaceRoughnessCalculations.Rp(deviation_vector);
-				case 'Rz'
+				case 'rz'
 					metric_value = SurfaceRoughnessCalculations.Rz(deviation_vector);
-				case 'Rsk'
+				case 'rsk'
 					metric_value = SurfaceRoughnessCalculations.Rsk(deviation_vector);
-				case 'Rku'
+				case 'rku'
 					metric_value = SurfaceRoughnessCalculations.Rku(deviation_vector);
-				case 'RzJIS'
+				case 'rzjis'
 					metric_value = SurfaceRoughnessCalculations.RzJIS(deviation_vector);
-				case 'RzPercent'
+				case 'rzpercent'
 					metric_value = SurfaceRoughnessCalculations.RzPercent(deviation_vector);
 				otherwise
 					fprintf('AnalysisMethods::QueryMetric: Input metric string not recognized.\n');
