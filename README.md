@@ -41,3 +41,16 @@ plot(rz_per_layer);
 
 ### Notes:
 Some scripts are also contained in this repository which handle more exploratory / complicated analysis. For example, `GKNInvarLA100Analysis3.m` and `GKNInvarLA100Analysis4.m` deal with different metrics and window sizes for the LA100 build.
+
+## Basic How-To: Cross Section
+**These are not really implemented yet, but there is an importer for them. These methods output raw data, not an object.**
+
+### Export from GOM Inspect
+1. Create your cross section
+1. File > Export > Geometry > ASCII
+1. Select the cross section from the explorer
+1. In the Parameters tab, click "Write Normals"
+
+### Import
+1. Obtain the absolute file path to a surface (i.e. `C:\Users\you\Documents\scan.asc`)
+1. Import using `[x,y,z,n_x,n_y,n_z] = FileTools.ImportGOMCrossSectionWithNormals(absolute_file_path);
