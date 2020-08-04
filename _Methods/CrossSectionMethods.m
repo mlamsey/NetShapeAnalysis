@@ -60,11 +60,15 @@ classdef CrossSectionMethods
 			bottom_z = [min(top_half.z),max(top_half.z)];
 			bottom_y = bottom_b + bottom_m .* bottom_z;
 
+			avg_z = [mean([bottom_z(1),top_z(1)]),mean([bottom_z(2),top_z(2)])];
+			avg_y = avg_b + avg_m .* avg_z;
+
 			plot(top_half.z,top_half.y,'k');
 			hold on;
 			plot(bottom_half.z,bottom_half.y,'k');
 			plot(top_z,top_y,'r--');
 			plot(bottom_z,bottom_y,'r--');
+			plot(avg_z,avg_y,'b-');
 			hold off;
 		end%func GetWallCenterLine
 
