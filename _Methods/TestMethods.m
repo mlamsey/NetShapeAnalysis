@@ -105,7 +105,7 @@ classdef TestMethods
 			% Looking at square 2D windows in the XZ Plane
 			roughness_values = zeros(n_z_points,n_x_points);
 			n_windows_without_points = 0;
-			metric_threshold = 5;
+			metric_threshold = 4;
 
 			for i = 1:n_z_points
 				z_min = z_steps(i);

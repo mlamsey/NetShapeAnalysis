@@ -71,5 +71,27 @@ classdef PlotTools
 
 		end%func PlotSurfaceDeviationHistogram
 
+		function PlotCrossSection(cross_section)
+			if(~isa(cross_section,'GOMCrossSection'))
+				fprintf('PlotTools::PlotCrossSection: Input not a GOMCrossSection\n');
+				return;
+			end%if
+
+			plot3(cross_section.x,cross_section.y,cross_section.z,'k.');
+		end%func PlotCrossSection
+
+		function PlotCrossSectionSet(cross_section_set)
+			hold on;
+			for i = 1:length(cross_section_set)
+				PlotTools.PlotCrossSection(cross_section_set{i});
+			end%for i
+			hold off;
+
+			view(45,45);
+			grid on;
+			xlabel('X (mm)');
+			ylabel('Y (mm)');
+			zlabel('Z (mm)');
+		end%func PlotCrossSectionSet
 	end%static methods
 end%class PlotTools
