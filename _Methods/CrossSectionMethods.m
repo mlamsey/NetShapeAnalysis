@@ -1,6 +1,7 @@
 classdef CrossSectionMethods
 	properties(Constant)
 		wall_center_line_buffer_bounds = 0.025; % percent 0-1
+		wall_subset_sample_offset = 2; % mm
 	end%const
 
 	methods(Static)
@@ -32,10 +33,26 @@ classdef CrossSectionMethods
 			end%for i
 		end%func GetWallHeightForSet
 
-		function argout = GetWallCenterLine(cross_section,height_axis)
+		function [slope_vector,intercept_vector] = GetWallCenterLinesForSet(cross_section_set,height_axis)
+			n_points = length(cross_section_set);
+			slope_vector = zeros(1,n_points);
+			intercept_vector = slope_vector;
+
+			for i = 1:n_points
+				[line_slope,line_intercept] = CrossSectionMethods.GetWallCenterLine(cross_section_set{i},'z',false);
+				slope_vector(i) = line_slope;
+				intercept_vector(i) = line_intercept;
+			end%for i
+
+		end%func GetWallCenterLinesForSet
+
+		function [line_slope,line_intercept] = GetWallCenterLine(cross_section,height_axis,bool_plot)
 			if(~isa(cross_section,'GOMCrossSection'))
 				fprintf('CrossSectionMethods::GetWallCenterLine: Input not a GOMCrossSection\n');
 				return;
+			end%if
+			if(nargin == 2)
+				bool_plot = true;
 			end%if
 
 			cross_section_subset = CrossSectionMethods.GetCrossSectionSubsetInAxisRange(cross_section,height_axis);
@@ -63,13 +80,25 @@ classdef CrossSectionMethods
 			avg_z = [mean([bottom_z(1),top_z(1)]),mean([bottom_z(2),top_z(2)])];
 			avg_y = avg_b + avg_m .* avg_z;
 
-			plot(top_half.z,top_half.y,'k');
-			hold on;
-			plot(bottom_half.z,bottom_half.y,'k');
-			plot(top_z,top_y,'r--');
-			plot(bottom_z,bottom_y,'r--');
-			plot(avg_z,avg_y,'b-');
-			hold off;
+			if(bool_plot)
+				fprintf('Top Line: y = %1.3fx + %1.3f, R2 = %1.3f\n',top_m,top_b,top_r2);
+				fprintf('Bottom Line: y = %1.3fx + %1.3f, R2 = %1.3f\n',bottom_m,bottom_b,bottom_r2);
+				fprintf('Center Line: y = %1.3fx + %1.3f\n',avg_m,avg_b);
+
+				figure;
+				plot(top_half.z,top_half.y,'k');
+				hold on;
+				plot(bottom_half.z,bottom_half.y,'b');
+				plot(top_z,top_y,'r--');
+				plot(bottom_z,bottom_y,'r--');
+				plot(avg_z,avg_y,'m-');
+				hold off;
+				legend('Top','Bottom');
+				title(cross_section_subset.file_path);
+			end%if
+
+			line_slope = avg_m;
+			line_intercept = avg_b;
 		end%func GetWallCenterLine
 
 	end%static methods
@@ -92,8 +121,11 @@ classdef CrossSectionMethods
 
 			cross_section_range = cross_section_max - cross_section_min;
 
-			subset_min = cross_section_min + CrossSectionMethods.wall_center_line_buffer_bounds * cross_section_range;
-			subset_max = cross_section_max - CrossSectionMethods.wall_center_line_buffer_bounds * cross_section_range;
+			% subset_min = cross_section_min + CrossSectionMethods.wall_center_line_buffer_bounds * cross_section_range;
+			% subset_max = cross_section_max - CrossSectionMethods.wall_center_line_buffer_bounds * cross_section_range;
+
+			subset_min = cross_section_min + CrossSectionMethods.wall_subset_sample_offset;
+			subset_max = cross_section_max - CrossSectionMethods.wall_subset_sample_offset;
 
 			logical_indices = cross_section_axis > subset_min & cross_section_axis < subset_max;
 
@@ -121,6 +153,7 @@ classdef CrossSectionMethods
 
 			n_points = length(cross_section_subset.x) - 1;
 			distances = zeros(1,n_points);
+
 			for i = 1:n_points
 				x1 = cross_section_subset.x(i);
 				y1 = cross_section_subset.y(i);
@@ -131,8 +164,10 @@ classdef CrossSectionMethods
 				distances(i) = Utils.Distance3(x1,y1,z1,x2,y2,z2);
 			end%for i
 
-			distance_mean = mean(distances);
-			flag = Utils.GetFlagsForLogicalIndices(distances > 10 * distance_mean);
+			% figure;
+			% plot(distances);
+
+			[~,flag] = max(distances);
 
 			if(length(flag) > 1)
 				fprintf('CrossSectionMethods::GetTopAndBottomOfWall: More than one flag!\n');
