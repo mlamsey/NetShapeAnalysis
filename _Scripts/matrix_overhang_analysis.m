@@ -69,15 +69,6 @@ for i = 1:length(wall_sets)
         intercept_y_range = intercept_range;
     end%if
 
-    % intercept_min = min(intercept_vector_list{i});
-    % if(intercept_min < intercept_y_min)
-    %     intercept_y_min = intercept_min;
-    % end%if
-
-    % intercept_max = max(intercept_vector_list{i});
-    % if(intercept_max > intercept_y_max)
-    %     intercept_y_max = intercept_max;
-    % end%if
 end%for i
 
 % Plot
