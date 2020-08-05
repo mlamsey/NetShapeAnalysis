@@ -1,7 +1,7 @@
 classdef CrossSectionMethods
 	properties(Constant)
 		wall_center_line_buffer_bounds = 0.025; % percent 0-1
-		wall_subset_sample_offset = 2; % mm
+		wall_subset_sample_offset = 2.5; % mm
 	end%const
 
 	methods(Static)
