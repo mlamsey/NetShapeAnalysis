@@ -1,4 +1,4 @@
-clc, close all
+clc
 clearvars -except wall_sets slope_vector_list intercept_vector_list recalc;
 
 if(~exist('recalc','var'))
@@ -31,7 +31,6 @@ if(recalc)
             wall_sets{file_i} = FileTools.ImportCrossSectionSetFromDirectory(sub_path);
             file_i = file_i + 1;
         end%if
-
     end%for i
 
     n_walls = length(wall_sets);
@@ -49,19 +48,21 @@ if(recalc)
 end%if
 
 % Calculate plot bounds
-slope_y_max = 0;
-slope_y_min = 0;
+angle_y_max = 0;
+angle_y_min = 0;
 intercept_y_range = 0;
 
 for i = 1:length(wall_sets)
-    slope_min = min(slope_vector_list{i});
-    if(slope_min < slope_y_min)
-        slope_y_min = slope_min;
+    slope_vector = slope_vector_list{i};
+    angle_vector = atan(slope_vector) .* 180 ./ pi;
+    angle_min = min(angle_vector);
+    if(angle_min < angle_y_min)
+        angle_y_min = angle_min;
     end%if
 
-    slope_max = max(slope_vector_list{i});
-    if(slope_max > slope_y_max)
-        slope_y_max = slope_max;
+    angle_max = max(angle_vector);
+    if(angle_max > angle_y_max)
+        angle_y_max = angle_max;
     end%if
 
     intercept_range = max(intercept_vector_list{i}) - min(intercept_vector_list{i});
@@ -76,20 +77,21 @@ fprintf('Plotting\n');
 figure_slope = figure('position',[100,100,1200,800]);
 figure_intercept = figure('position',[100,100,1200,800]);
 
-plot_angle_labels = {'-40^{\circ}','-30^{\circ}','-20^{\circ}','-10^{\circ}','0^{\circ}','+10^{\circ}','+20^{\circ}','+30^{\circ}','+40^{\circ}'};
+plot_angle_labels = {'+40^{\circ}','+30^{\circ}','+20^{\circ}','+10^{\circ}','0^{\circ}','-10^{\circ}','-20^{\circ}','-30^{\circ}','-40^{\circ}'};
 
 for i = 1:length(wall_sets)
     title_string = strcat('Torch at',{' '},plot_angle_labels{i});
     title_string = title_string{1};
 
     slope_vector = slope_vector_list{i};
+    angle_vector = atan(slope_vector) .* 180 ./ pi;
     axes_slope = subplot(3,3,i,'parent',figure_slope);
-    plot(slope_vector,'parent',axes_slope);
-    ylim(axes_slope,[slope_y_min,slope_y_max]);
+    plot(angle_vector,'parent',axes_slope);
+    ylim(axes_slope,[angle_y_min,angle_y_max]);
     grid(axes_slope,'on');
     title(axes_slope,title_string);
     xlabel(axes_slope,'Slice (mm)');
-    ylabel(axes_slope,'Slope (mm z/mm travel)');
+    ylabel(axes_slope,'Angle (degrees)');
 
     intercept_vector = intercept_vector_list{i};
     intercept_y_min = mean(intercept_vector_list{i}) - intercept_range / 2;
