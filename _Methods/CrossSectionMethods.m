@@ -5,6 +5,27 @@ classdef CrossSectionMethods
 	end%const
 
 	methods(Static)
+		function new_set = SwitchCrossSectionSetParameters(original_set,axis_1,axis_2)
+			new_set = original_set;
+			for i = 1:length(original_set)
+				new_set{i} = CrossSectionMethods.SwitchCrossSectionParameters(original_set{i},axis_1,axis_2);
+			end%for i
+		end%func SwitchCrossSectionSetParameters
+		function new_cross_section = SwitchCrossSectionParameters(original_cross_section,axis_1,axis_2)
+			if(~isa(original_cross_section,'GOMCrossSection'))
+				fprintf('CrossSectionMethods::SwitchCrossSectionParameters: Input 1 not a GOMCrossSection\n');
+				new_cross_section = original_cross_section;
+				return;
+			end%if
+
+			parameter_1 = CrossSectionMethods.GetParameter(original_cross_section,axis_1);
+			parameter_2 = CrossSectionMethods.GetParameter(original_cross_section,axis_2);
+
+			new_cross_section = CrossSectionMethods.SetParameter(original_cross_section,axis_1,parameter_2);
+			new_cross_section = CrossSectionMethods.SetParameter(new_cross_section,axis_2,parameter_1);
+
+		end%func SwitchCrossSectionParameters
+
 		function wall_height = GetWallHeight(cross_section,height_axis)
 			if(~isa(cross_section,'GOMCrossSection'))
 				fprintf('CrossSectionMethods::GetWallHeight: Input not a GOMCrossSection\n');
@@ -182,5 +203,45 @@ classdef CrossSectionMethods
 			top_half = CrossSectionMethods.CreateCrossSectionSubsetWithLogicalIndices(cross_section_subset,top_half_indices);
 			bottom_half = CrossSectionMethods.CreateCrossSectionSubsetWithLogicalIndices(cross_section_subset,bottom_half_indices);
 		end%func GetTopAndBottomOfWall
+
+		function parameter_values = GetParameter(cross_section,parameter_name)
+			parameter_name = lower(parameter_name);
+			switch parameter_name
+				case 'x'
+					parameter_values = cross_section.x;
+				case 'n_x'
+					parameter_values = cross_section.n_x;
+				case 'y'
+					parameter_values = cross_section.y;
+				case 'n_y'
+					parameter_values = cross_section.n_y;
+				case 'z'
+					parameter_values = cross_section.z;
+				case 'n_z'
+					parameter_values = cross_section.n_z;
+				otherwise
+					fprintf('CrossSectionMethods::GetParameter: Invalid Parameter Name\n');
+			end%switch
+		end%func GetAxis
+
+		function new_cross_section = SetParameter(cross_section,parameter_name,values)
+			new_cross_section = cross_section;
+			switch parameter_name
+				case 'x'
+					new_cross_section.x = values;
+				case 'n_x'
+					new_cross_section.x = values;
+				case 'y'
+					new_cross_section.y = values;
+				case 'n_y'
+					new_cross_section.y = values;
+				case 'z'
+					new_cross_section.z = values;
+				case 'n_z'
+					new_cross_section.z = values;
+				otherwise
+					fprintf('CrossSectionMethods::SetParameter: Invalid Parameter name\n');
+			end%switch
+		end%func SetAxis
 	end%private methods
 end%class CrossSectionAnalysis
