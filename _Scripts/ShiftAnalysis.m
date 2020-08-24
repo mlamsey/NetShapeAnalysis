@@ -71,8 +71,9 @@ function ShiftAnalysis(data_set,data_set_name)
 		xlabel('Cross Section (mm)');
 		ylabel('Path Shift per Layer (mm)');
 		grid on;
-		title(titles{i});
+		title(strcat(titles{i},' Compensation'));
 		ylim([-0.15,0.15]);
+		legend('Start','Steady State','End')
 
 	end
 end%func ShiftAnalysis

@@ -29,6 +29,7 @@ if(recalc)
             end%if
 
             wall_sets{file_i} = FileTools.ImportCrossSectionSetFromDirectory(sub_path);
+            % wall_sets{file_i} = CrossSectionMethods.SwitchCrossSectionSetParameters(wall_sets{file_i},'y','z');
             file_i = file_i + 1;
         end%if
     end%for i
@@ -74,24 +75,27 @@ end%for i
 
 % Plot
 fprintf('Plotting\n');
-figure_slope = figure('position',[100,100,1200,800]);
+% figure_slope = figure('position',[100,100,1200,800]);
 figure_intercept = figure('position',[100,100,1200,800]);
 
 plot_angle_labels = {'+40^{\circ}','+30^{\circ}','+20^{\circ}','+10^{\circ}','0^{\circ}','-10^{\circ}','-20^{\circ}','-30^{\circ}','-40^{\circ}'};
+angle_export = {};
 
 for i = 1:length(wall_sets)
     title_string = strcat('Torch at',{' '},plot_angle_labels{i});
     title_string = title_string{1};
 
     slope_vector = slope_vector_list{i};
-    angle_vector = atan(slope_vector) .* 180 ./ pi;
-    axes_slope = subplot(3,3,i,'parent',figure_slope);
-    plot(angle_vector,'parent',axes_slope);
-    ylim(axes_slope,[angle_y_min,angle_y_max]);
-    grid(axes_slope,'on');
-    title(axes_slope,title_string);
-    xlabel(axes_slope,'Slice (mm)');
-    ylabel(axes_slope,'Angle (degrees)');
+    angle_vector = (atan(slope_vector) .* 180 ./ pi);
+    % axes_slope = subplot(3,3,i,'parent',figure_slope);
+    % plot(angle_vector,'parent',axes_slope);
+    % ylim(axes_slope,[angle_y_min,angle_y_max]);
+    % grid(axes_slope,'on');
+    % title(axes_slope,title_string);
+    % xlabel(axes_slope,'Slice (mm)');
+    % ylabel(axes_slope,'Angle (degrees)');
+
+    angle_export{i} = angle_vector;
 
     intercept_vector = intercept_vector_list{i};
     intercept_y_min = mean(intercept_vector_list{i}) - intercept_range / 2;
