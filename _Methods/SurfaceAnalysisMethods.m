@@ -1,4 +1,4 @@
-classdef AnalysisMethods
+classdef SurfaceAnalysisMethods
 	properties(Constant)
 
 	end%const
