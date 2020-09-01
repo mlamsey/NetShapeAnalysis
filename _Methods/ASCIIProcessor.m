@@ -43,4 +43,6 @@ classdef ASCIIProcessor
 			fprintf('File written in %1.2f seconds\n',toc);
 		end%func DecimateASCII
 	end%methods
+    
+    %this is a test comment from michael buckley 
 end%class ASCIIProcessor
