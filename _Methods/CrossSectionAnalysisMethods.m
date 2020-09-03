@@ -54,7 +54,7 @@ classdef CrossSectionAnalysisMethods
 			end%if
 
 			cross_section_subset = CrossSectionMethods.GetCrossSectionSubsetInAxisRange(cross_section,height_axis);
-			[top_half,bottom_half] = CrossSectionMethods.GetTopAndBottomOfWall(cross_section_subset,height_axis);
+			[top_half,bottom_half] = CrossSectionAnalysisMethods.GetTopAndBottomOfWall(cross_section_subset,height_axis);
 			top_mdl = fitlm(top_half.z,top_half.y);
 			bottom_mdl = fitlm(bottom_half.z,bottom_half.y);
 

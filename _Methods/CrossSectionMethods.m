@@ -26,9 +26,7 @@ classdef CrossSectionMethods
 			new_cross_section = CrossSectionMethods.SetParameter(new_cross_section,axis_2,parameter_1);
 
 		end%func SwitchCrossSectionParameters
-
-	methods(Static, Access = 'private')
-		function cross_section_subset = GetCrossSectionSubsetInAxisRange(cross_section,height_axis)
+        function cross_section_subset = GetCrossSectionSubsetInAxisRange(cross_section,height_axis)
 			switch height_axis
 				case 'x'
 					cross_section_axis = cross_section.x;
@@ -55,8 +53,8 @@ classdef CrossSectionMethods
 
 			cross_section_subset = CrossSectionMethods.CreateCrossSectionSubsetWithLogicalIndices(cross_section,logical_indices);
 		end%func GetCrossSectionSubsetInRange
-
-		function cross_section_subset = CreateCrossSectionSubsetWithLogicalIndices(cross_section,logical_indices)
+        
+        function cross_section_subset = CreateCrossSectionSubsetWithLogicalIndices(cross_section,logical_indices)
 			cross_section_subset = cross_section; % copy
 
 			cross_section_subset.x = cross_section_subset.x(logical_indices);
@@ -67,6 +65,11 @@ classdef CrossSectionMethods
 			cross_section_subset.n_z = cross_section_subset.n_z(logical_indices);
 		end%func CreateCrossSectionSubsetWithLogicalIndices
 
+    end
+	methods(Static, Access = 'private')
+		
+
+		
 		function parameter_values = GetParameter(cross_section,parameter_name)
 			parameter_name = lower(parameter_name);
 			switch parameter_name
