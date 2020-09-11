@@ -27,7 +27,7 @@ classdef CrossSectionAnalysisMethods
 			wall_height_vector = zeros(1,n_points);
 
 			for i = 1:n_points
-				wall_height_vector(i) = CrossSectionMethods.GetWallHeight(cross_section_set{i},height_axis);
+				wall_height_vector(i) = CrossSectionAnalysisMethods.GetWallHeight(cross_section_set{i},height_axis);
 			end%for i
 		end%func GetWallHeightForSet
 
@@ -37,7 +37,7 @@ classdef CrossSectionAnalysisMethods
 			intercept_vector = slope_vector;
 
 			for i = 1:n_points
-				[line_slope,line_intercept] = CrossSectionMethods.GetWallCenterLine(cross_section_set{i},'z',false);
+				[line_slope,line_intercept] = CrossSectionAnalysisMethods.GetWallCenterLine(cross_section_set{i},'z',false);
 				slope_vector(i) = line_slope;
 				intercept_vector(i) = line_intercept;
 			end%for i

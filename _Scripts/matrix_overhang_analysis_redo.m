@@ -29,6 +29,19 @@ if(recalc)
             end%if
 
             wall_sets{file_i} = FileTools.ImportCrossSectionSetFromDirectory(sub_path);
+
+            % Fix Wall 5
+            if(strcmp(sub_dir_name,'wall5'))
+                temp_set = wall_sets{file_i};
+                wall_subset = {temp_set{1:50}};
+                wall_subset = flip(wall_subset);
+                
+                for k = 1:50
+                    temp_set{k} = wall_subset{k};
+                end%for i
+
+                wall_sets{file_i} = temp_set;
+            end%if
             % wall_sets{file_i} = CrossSectionMethods.SwitchCrossSectionSetParameters(wall_sets{file_i},'y','z');
             file_i = file_i + 1;
         end%if
@@ -79,6 +92,9 @@ fprintf('Plotting\n');
 figure_intercept = figure('position',[100,100,1200,800]);
 
 plot_angle_labels = {'+40^{\circ}','+30^{\circ}','+20^{\circ}','+10^{\circ}','0^{\circ}','-10^{\circ}','-20^{\circ}','-30^{\circ}','-40^{\circ}'};
+
+cad_center_lines = 25.4 .* [1.25,0,-1.25,-2.5,5.75,1.25,0,-1.25,-2.5];
+angles = -40:10:40;
 angle_export = {};
 
 for i = 1:length(wall_sets)
@@ -98,14 +114,19 @@ for i = 1:length(wall_sets)
     angle_export{i} = angle_vector;
 
     intercept_vector = intercept_vector_list{i};
-    intercept_y_min = mean(intercept_vector_list{i}) - intercept_range / 2;
-    intercept_y_max = mean(intercept_vector_list{i}) + intercept_range / 2;
+    % intercept_y_min = mean(intercept_vector_list{i}) - intercept_range / 2;
+    % intercept_y_max = mean(intercept_vector_list{i}) + intercept_range / 2;
+    intercept_y_min = mean(intercept_vector_list{i}) - 5;
+    intercept_y_max = mean(intercept_vector_list{i}) + 5;
 
     axes_intercept = subplot(3,3,i,'parent',figure_intercept);
     plot(intercept_vector,'parent',axes_intercept);
     hold(axes_intercept,'on');
-    line([min(xlim(axes_intercept)),max(xlim(axes_intercept))],[mean(intercept_vector),mean(intercept_vector)],'color','k','linestyle','--');
+    line([min(xlim(axes_intercept)),max(xlim(axes_intercept))],[mean(intercept_vector),mean(intercept_vector)],'color','k','linestyle','--'); 
+    line([min(xlim(axes_intercept)),max(xlim(axes_intercept))],[cad_center_lines(i),cad_center_lines(i)],'color','r','linestyle','--'); 
     hold(axes_intercept,'off');
+
+    separation(i) = cad_center_lines(i) - mean(intercept_vector);
 
     legend('Intercept','Mean Intercept');
     ylim(axes_intercept,[intercept_y_min,intercept_y_max]);
@@ -114,3 +135,6 @@ for i = 1:length(wall_sets)
     xlabel(axes_intercept,'Slice (mm)');
     ylabel(axes_intercept,'Centerline Intersect (mm)');
 end%for i
+
+figure
+plot(angles,separation)
