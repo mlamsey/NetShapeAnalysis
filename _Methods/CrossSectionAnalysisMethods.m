@@ -123,17 +123,34 @@ classdef CrossSectionAnalysisMethods
 			% figure;
 			% plot(distances);
 
-			[~,flag] = max(distances);
+			d_dist = abs(diff(distances));
+			flags = find(d_dist > 1);
+			flags = [1,flags,length(distances)];
+			lengths = flags(2:end) - flags(1:end-1);
 
-			if(length(flag) > 1)
-				fprintf('CrossSectionMethods::GetTopAndBottomOfWall: More than one flag!\n');
-				top_half = [];
-				bottom_half = [];
-				return;
+			if(length(lengths) < 2)
+				[~,flag] = max(distances);
+				top_half_indices = 1:flag;
+				bottom_half_indices = flag+1:length(cross_section_subset.x);
+			else
+				[~,biggest_object_indices] = maxk(lengths,2);
+				biggest_object_indices = biggest_object_indices + 1;
+
+				top_half_indices = flags(biggest_object_indices(1)-1):flags(biggest_object_indices(1));
+				bottom_half_indices = (flags(biggest_object_indices(2)-1) + 1):flags(biggest_object_indices(2));
 			end%if
 
-			top_half_indices = 1:flag;
-			bottom_half_indices = flag+1:length(cross_section_subset.x);
+			% [~,flag] = max(distances);
+
+			% if(length(flag) > 1)
+			% 	fprintf('CrossSectionMethods::GetTopAndBottomOfWall: More than one flag!\n');
+			% 	top_half = [];
+			% 	bottom_half = [];
+			% 	return;
+			% end%if
+
+			% top_half_indices = 1:flag;
+			% bottom_half_indices = flag+1:length(cross_section_subset.x);
 
 			top_half = CrossSectionMethods.CreateCrossSectionSubsetWithLogicalIndices(cross_section_subset,top_half_indices);
 			bottom_half = CrossSectionMethods.CreateCrossSectionSubsetWithLogicalIndices(cross_section_subset,bottom_half_indices);

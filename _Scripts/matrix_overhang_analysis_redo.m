@@ -53,6 +53,7 @@ if(recalc)
 
     fprintf('Calculating Center Lines\n');
     for i = 1:n_walls
+        fprintf('Wall %i...\n',i);
         [slope_vector,intercept_vector] = CrossSectionAnalysisMethods.GetWallCenterLinesForSet(wall_sets{i},'z');
         slope_vector_list{i} = slope_vector;
         intercept_vector_list{i} = intercept_vector;
@@ -93,7 +94,7 @@ figure_intercept = figure('position',[100,100,1200,800]);
 
 plot_angle_labels = {'+40^{\circ}','+30^{\circ}','+20^{\circ}','+10^{\circ}','0^{\circ}','-10^{\circ}','-20^{\circ}','-30^{\circ}','-40^{\circ}'};
 
-cad_center_lines = 25.4 .* [1.25,0,-1.25,-2.5,5.75,1.25,0,-1.25,-2.5];
+cad_center_lines = 25.4 .* [1.25,0,-1.25,-2.5,2.75,1.25,0,-1.25,-2.5];
 angles = -40:10:40;
 angle_export = {};
 
@@ -128,7 +129,7 @@ for i = 1:length(wall_sets)
 
     separation(i) = cad_center_lines(i) - mean(intercept_vector);
 
-    legend('Intercept','Mean Intercept');
+    % legend('Intercept','Mean Intercept','CAD Centerline');
     ylim(axes_intercept,[intercept_y_min,intercept_y_max]);
     grid(axes_intercept);
     title(axes_intercept,title_string);
@@ -136,5 +137,9 @@ for i = 1:length(wall_sets)
     ylabel(axes_intercept,'Centerline Intersect (mm)');
 end%for i
 
-figure
-plot(angles,separation)
+figure;
+plot(angles,separation);
+grid on;
+title('Deviation from CAD Centerline');
+xlabel('Torch Angle (Degrees)');
+ylabel('Deviation (mm)');

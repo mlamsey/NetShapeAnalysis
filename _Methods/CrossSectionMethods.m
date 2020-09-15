@@ -64,12 +64,9 @@ classdef CrossSectionMethods
 			cross_section_subset.n_y = cross_section_subset.n_y(logical_indices);
 			cross_section_subset.n_z = cross_section_subset.n_z(logical_indices);
 		end%func CreateCrossSectionSubsetWithLogicalIndices
-
     end
+    
 	methods(Static, Access = 'private')
-		
-
-		
 		function parameter_values = GetParameter(cross_section,parameter_name)
 			parameter_name = lower(parameter_name);
 			switch parameter_name
