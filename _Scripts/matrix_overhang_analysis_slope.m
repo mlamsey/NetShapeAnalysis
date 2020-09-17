@@ -8,6 +8,7 @@ end%if
 if(recalc)
     fprintf('Importing GOM Cross Sections\n');
     dir_path = uigetdir;
+    disp(dir_path);
 
     dir_info = dir(dir_path);
     n_files = length(dir_info);
@@ -89,14 +90,15 @@ end%for i
 
 % Plot
 fprintf('Plotting\n');
-% figure_slope = figure('position',[100,100,1200,800]);
-figure_intercept = figure('position',[100,100,1200,800]);
+figure_slope = figure('position',[100,100,1200,800]);
+% figure_intercept = figure('position',[100,100,1200,800]);
 
 plot_angle_labels = {'+40^{\circ}','+30^{\circ}','+20^{\circ}','+10^{\circ}','0^{\circ}','-10^{\circ}','-20^{\circ}','-30^{\circ}','-40^{\circ}'};
 
-cad_center_lines = 25.4 .* [1.25,0,-1.25,-2.5,2.75,1.25,0,-1.25,-2.5];
+% cad_center_lines = 25.4 .* [1.25,0,-1.25,-2.5,2.75,1.25,0,-1.25,-2.5];
 angles = flip(-40:10:40);
 angle_export = {};
+slope_averages = [];
 
 for i = 1:length(wall_sets)
     title_string = strcat('Torch at',{' '},plot_angle_labels{i});
@@ -104,42 +106,55 @@ for i = 1:length(wall_sets)
 
     slope_vector = slope_vector_list{i};
     angle_vector = (atan(slope_vector) .* 180 ./ pi);
-    % axes_slope = subplot(3,3,i,'parent',figure_slope);
-    % plot(angle_vector,'parent',axes_slope);
-    % ylim(axes_slope,[angle_y_min,angle_y_max]);
-    % grid(axes_slope,'on');
-    % title(axes_slope,title_string);
-    % xlabel(axes_slope,'Slice (mm)');
-    % ylabel(axes_slope,'Angle (degrees)');
+    slope_averages(i) = mean(angle_vector);
+    axes_slope = subplot(3,3,i,'parent',figure_slope);
+    plot(angle_vector,'parent',axes_slope);
+    ylim(axes_slope,[-10,10]);
+    grid(axes_slope,'on');
+    title(axes_slope,title_string);
+    xlabel(axes_slope,'Slice (mm)');
+    ylabel(axes_slope,'Angle (degrees)');
+    hold(axes_slope,'on');
+    line([0,102],[slope_averages(i),slope_averages(i)],'color','r');
+    line([0,102],[0,0],'color','k','linestyle','--');
+    % legend('Slope','Average Slope','Nominal');
+    hold(axes_slope,'off');
 
     angle_export{i} = angle_vector;
 
-    intercept_vector = intercept_vector_list{i};
+    % intercept_vector = intercept_vector_list{i};
     % intercept_y_min = mean(intercept_vector_list{i}) - intercept_range / 2;
     % intercept_y_max = mean(intercept_vector_list{i}) + intercept_range / 2;
-    intercept_y_min = mean(intercept_vector_list{i}) - 5;
-    intercept_y_max = mean(intercept_vector_list{i}) + 5;
+    % intercept_y_min = mean(intercept_vector_list{i}) - 5;
+    % intercept_y_max = mean(intercept_vector_list{i}) + 5;
 
-    axes_intercept = subplot(3,3,i,'parent',figure_intercept);
-    plot(intercept_vector,'parent',axes_intercept);
-    hold(axes_intercept,'on');
-    line([min(xlim(axes_intercept)),max(xlim(axes_intercept))],[mean(intercept_vector),mean(intercept_vector)],'color','k','linestyle','--'); 
-    line([min(xlim(axes_intercept)),max(xlim(axes_intercept))],[cad_center_lines(i),cad_center_lines(i)],'color','r','linestyle','--'); 
-    hold(axes_intercept,'off');
+    % axes_intercept = subplot(3,3,i,'parent',figure_intercept);
+    % plot(intercept_vector,'parent',axes_intercept);
+    % hold(axes_intercept,'on');
+    % line([min(xlim(axes_intercept)),max(xlim(axes_intercept))],[mean(intercept_vector),mean(intercept_vector)],'color','k','linestyle','--'); 
+    % line([min(xlim(axes_intercept)),max(xlim(axes_intercept))],[cad_center_lines(i),cad_center_lines(i)],'color','r','linestyle','--'); 
+    % hold(axes_intercept,'off');
 
-    separation(i) = cad_center_lines(i) - mean(intercept_vector);
+    % separation(i) = cad_center_lines(i) - mean(intercept_vector);
 
     % legend('Intercept','Mean Intercept','CAD Centerline');
-    ylim(axes_intercept,[intercept_y_min,intercept_y_max]);
-    grid(axes_intercept);
-    title(axes_intercept,title_string);
-    xlabel(axes_intercept,'Slice (mm)');
-    ylabel(axes_intercept,'Centerline Intersect (mm)');
+    % ylim(axes_intercept,[intercept_y_min,intercept_y_max]);
+    % grid(axes_intercept);
+    % title(axes_intercept,title_string);
+    % xlabel(axes_intercept,'Slice (mm)');
+    % ylabel(axes_intercept,'Centerline Intersect (mm)');
 end%for i
 
 figure;
-plot(angles,separation);
+plot(angles,slope_averages);
 grid on;
-title('Deviation from CAD Centerline');
+title('Slope Deviation');
 xlabel('Torch Angle (Degrees)');
-ylabel('Deviation (mm)');
+ylabel('Slope Angle (Degrees)');
+
+% figure;
+% plot(angles,separation);
+% grid on;
+% title('Deviation from CAD Centerline');
+% xlabel('Torch Angle (Degrees)');
+% ylabel('Deviation (mm)');
