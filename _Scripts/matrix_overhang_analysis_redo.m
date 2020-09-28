@@ -1,5 +1,5 @@
 clc
-clearvars -except wall_sets slope_vector_list intercept_vector_list recalc;
+clearvars -except wall_sets slope_vector_list intercept_vector_list recalc dir_path;
 
 if(~exist('recalc','var'))
     recalc = true;
@@ -94,7 +94,9 @@ figure_intercept = figure('position',[100,100,1200,800]);
 
 plot_angle_labels = {'+40^{\circ}','+30^{\circ}','+20^{\circ}','+10^{\circ}','0^{\circ}','-10^{\circ}','-20^{\circ}','-30^{\circ}','-40^{\circ}'};
 
+% cad_center_lines = 25.4 .* [1.25,0,-1.25,-2.5,5.75,1.25,0,-1.25,-2.5];
 cad_center_lines = 25.4 .* [1.25,0,-1.25,-2.5,2.75,1.25,0,-1.25,-2.5];
+
 angles = flip(-40:10:40);
 angle_export = {};
 
@@ -123,11 +125,15 @@ for i = 1:length(wall_sets)
     axes_intercept = subplot(3,3,i,'parent',figure_intercept);
     plot(intercept_vector,'parent',axes_intercept);
     hold(axes_intercept,'on');
-    line([min(xlim(axes_intercept)),max(xlim(axes_intercept))],[mean(intercept_vector),mean(intercept_vector)],'color','k','linestyle','--'); 
-    line([min(xlim(axes_intercept)),max(xlim(axes_intercept))],[cad_center_lines(i),cad_center_lines(i)],'color','r','linestyle','--'); 
+
+    cad_height = cad_center_lines(i);
+    wall_height = mean(intercept_vector);
+
+    line([min(xlim(axes_intercept)),max(xlim(axes_intercept))],[wall_height,wall_height],'color','k','linestyle','--'); 
+    line([min(xlim(axes_intercept)),max(xlim(axes_intercept))],[cad_height,cad_height],'color','r','linestyle','--'); 
     hold(axes_intercept,'off');
 
-    separation(i) = cad_center_lines(i) - mean(intercept_vector);
+    separation(i) = wall_height - cad_height;
 
     % legend('Intercept','Mean Intercept','CAD Centerline');
     ylim(axes_intercept,[intercept_y_min,intercept_y_max]);
@@ -135,10 +141,14 @@ for i = 1:length(wall_sets)
     title(axes_intercept,title_string);
     xlabel(axes_intercept,'Slice (mm)');
     ylabel(axes_intercept,'Centerline Intersect (mm)');
+
+    fprintf('Wall Plot %i: Angle %1.1f, Separation %1.3fmm\n',i,angles(i),separation(i));
+    fprintf('CAD Centerline: %1.3fmm, Wall Intercept: %1.3fmm\n\n',cad_height,wall_height);
 end%for i
 
 figure;
 plot(angles,separation);
+% plot(separation);
 grid on;
 title('Deviation from CAD Centerline');
 xlabel('Torch Angle (Degrees)');
