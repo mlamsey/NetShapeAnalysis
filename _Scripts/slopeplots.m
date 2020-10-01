@@ -71,9 +71,48 @@ ylabel('Slope (degrees)');
 title('Wall Slope Trial Comparison');
 
 %%
+ 
+slopes_avg_45 = (slopes_45+slopes_45_shifted)/2;
+slopes_avg_65 = (slopes_65+slopes_65_shifted)/2;
+slopes_avg_90 = (slopes_90+slopes_90_shifted)/2;
+ 
+slopes_25poly = polyfit(angles,slopes_25,3)
+slopes_45poly = polyfit(angles,slopes_45,3);
+slopes_65poly = polyfit(angles,slopes_65,3);
+slopes_90poly = polyfit(angles,slopes_90,3);
+ 
+x1 = linspace(-40,40);
+y1_25 = polyval(slopes_25poly,x1);
+y1_45 = polyval(slopes_45poly,x1);
+y1_65 = polyval(slopes_65poly,x1);
+y1_90 = polyval(slopes_90poly,x1);
+ 
+figure;
+plot(angles,slopes_25,'color','g','linestyle','-');
+hold on;
+plot(x1,y1_25,'color','g','linestyle','--');
+plot(angles,slopes_45,'color','k','linestyle','-');
+plot(x1,y1_45,'color','k','linestyle','--');
+plot(angles,slopes_65,'color','b','linestyle','-');
+plot(x1,y1_65,'color','b','linestyle','--');
+plot(angles,slopes_90,'color','r','linestyle','-');
+plot(x1,y1_90,'color','r','linestyle','--');
+hold off;
+l = legend('25^{\circ}','25^{\circ} fit','45^{\circ}','45^{\circ} fit','65^{\circ}','65^{\circ} fit','90^{\circ}','90^{\circ} fit');
+set(l,'location','northwest');
+grid on
+xlabel('Torch Angle (degrees)');
+ylabel('Slope (degrees)');
+title('Average Slope Value Comparison');
+ 
+%%
+val_25 = roots(slopes_25poly);
+val_45 = roots(slopes_45poly);
+val_65 = roots(slopes_65poly);
+val_90 = roots(slopes_90poly);
 
 base_angles = [0,25,45,65,90];
-optimal_torch_angle = [0,-18.3,-16.8,-12.5,-6.5];
+optimal_torch_angle = [0,val_25(3),val_45(3),val_65(3),val_90(3)];
 plot(base_angles,optimal_torch_angle);
 grid on;
 title('Optimal Torch Compensation');
