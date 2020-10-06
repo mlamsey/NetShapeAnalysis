@@ -27,6 +27,7 @@ classdef CrossSectionMethods
 			new_cross_section = CrossSectionMethods.SetParameter(new_cross_section,axis_2,parameter_1);
 
 		end%func SwitchCrossSectionParameters
+
         function cross_section_subset = GetCrossSectionSubsetInAxisRange(cross_section,height_axis)
 			switch height_axis
 				case 'x'
@@ -49,6 +50,34 @@ classdef CrossSectionMethods
 
 			subset_min = cross_section_min + CrossSectionMethods.wall_subset_sample_lower_offset;
 			subset_max = cross_section_max - CrossSectionMethods.wall_subset_sample_upper_offset;
+
+			logical_indices = cross_section_axis > subset_min & cross_section_axis < subset_max;
+
+			cross_section_subset = CrossSectionMethods.CreateCrossSectionSubsetWithLogicalIndices(cross_section,logical_indices);
+		end%func GetCrossSectionSubsetInRange
+
+		function cross_section_subset = GetCustomCrossSectionSubsetInAxisRange(cross_section,height_axis,lower_offset,upper_offset)
+			switch height_axis
+				case 'x'
+					cross_section_axis = cross_section.x;
+				case 'y'
+					cross_section_axis = cross_section.y;
+				case 'z'
+					cross_section_axis = cross_section.z;
+				otherwise
+					fprintf('CrossSectionMethods::GetCrossSectionSubsetInAxisRange: Height Axis input not recognized\n');
+			end%switch
+
+			cross_section_min = min(cross_section_axis);
+			cross_section_max = max(cross_section_axis);
+
+			cross_section_range = cross_section_max - cross_section_min;
+
+			% subset_min = cross_section_min + CrossSectionMethods.wall_center_line_buffer_bounds * cross_section_range;
+			% subset_max = cross_section_max - CrossSectionMethods.wall_center_line_buffer_bounds * cross_section_range;
+
+			subset_min = cross_section_min + lower_offset;
+			subset_max = cross_section_max - upper_offset;
 
 			logical_indices = cross_section_axis > subset_min & cross_section_axis < subset_max;
 
