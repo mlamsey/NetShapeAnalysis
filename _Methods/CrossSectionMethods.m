@@ -71,11 +71,6 @@ classdef CrossSectionMethods
 			cross_section_min = min(cross_section_axis);
 			cross_section_max = max(cross_section_axis);
 
-			cross_section_range = cross_section_max - cross_section_min;
-
-			% subset_min = cross_section_min + CrossSectionMethods.wall_center_line_buffer_bounds * cross_section_range;
-			% subset_max = cross_section_max - CrossSectionMethods.wall_center_line_buffer_bounds * cross_section_range;
-
 			subset_min = cross_section_min + lower_offset;
 			subset_max = cross_section_max - upper_offset;
 
