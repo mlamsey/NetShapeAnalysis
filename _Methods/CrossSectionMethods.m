@@ -1,7 +1,8 @@
 classdef CrossSectionMethods
 	properties(Constant)
 		wall_center_line_buffer_bounds = 0.025; % percent 0-1
-		wall_subset_sample_offset = 2.5; % mm
+		wall_subset_sample_upper_offset = 2.5; % mm
+        wall_subset_sample_lower_offset = 8*2.25; %mm
 	end%const
 
 	methods(Static)
@@ -46,8 +47,8 @@ classdef CrossSectionMethods
 			% subset_min = cross_section_min + CrossSectionMethods.wall_center_line_buffer_bounds * cross_section_range;
 			% subset_max = cross_section_max - CrossSectionMethods.wall_center_line_buffer_bounds * cross_section_range;
 
-			subset_min = cross_section_min + CrossSectionMethods.wall_subset_sample_offset;
-			subset_max = cross_section_max - CrossSectionMethods.wall_subset_sample_offset;
+			subset_min = cross_section_min + CrossSectionMethods.wall_subset_sample_lower_offset;
+			subset_max = cross_section_max - CrossSectionMethods.wall_subset_sample_upper_offset;
 
 			logical_indices = cross_section_axis > subset_min & cross_section_axis < subset_max;
 
