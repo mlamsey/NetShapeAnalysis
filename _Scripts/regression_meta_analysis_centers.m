@@ -70,7 +70,11 @@ for dir_i = 1:parent_n_files
 
 			fprintf('Calculating Center Lines\n');
 			for i = 1:n_walls
-			    fprintf('Wall %i...\n',i);
+			    if(i == 1)
+			    	fprintf('Wall ');
+			    end%if
+
+			    fprintf('%i ',i);
 			    lower_offset = min_vector(parameter_i);
 			    upper_offset = 2.5; % mm
 
@@ -81,6 +85,10 @@ for dir_i = 1:parent_n_files
 			    angle_vector = atan(slope_vector) .* 180 ./ pi;
 			    angle_averages(i) = mean(angle_vector);
 			    intercept_averages(i) = mean(intercept_vector);
+
+			    if (i == n_walls)
+			    	fprintf('\n');
+			    end%if
 			end%for i
 
 			angle_averages
