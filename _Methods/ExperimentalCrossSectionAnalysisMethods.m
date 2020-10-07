@@ -68,7 +68,7 @@ classdef ExperimentalCrossSectionAnalysisMethods
 				line_slope = avg_m;
 				line_intercept = avg_b;
 			else
-				fprintf('CrossSectionAnalysisMethods::GetWallCenterLine: Top and Bottom Halves not recognized\n');
+				fprintf('ExperimentalCrossSectionAnalysisMethods::GetWallCenterLine: Top and Bottom Halves not recognized\n');
 				line_slope = NaN;
 				line_intercept = NaN;
 			end%if
