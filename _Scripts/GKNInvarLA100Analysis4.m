@@ -10,6 +10,11 @@
 close all;
 clearvars -except s;
 
+if(~exist('s','var'))
+    s = FileTools.PromptForScanImport;
+    ScanMethods.SwitchScanDataAxes(s.data,'y','z');
+end%if
+
 f = figure('position',[0,0,1400,800],'name','Resolution Comparison');
 x_step_increments = [2.3,5,10,15,20,30];
 for resolution_i = 1:length(x_step_increments)
@@ -170,7 +175,7 @@ for resolution_i = 1:length(x_step_increments)
 			data_subset = ScanMethods.GetScanDataSubsetInRange(z_subset,'x',x_min,x_max);
 			
 			if(length(data_subset.dev) > 0)
-				metric_temp(j) = AnalysisMethods.QueryMetric(data_subset,metric_string);
+				metric_temp(j) = SurfaceAnalysisMethods.QueryMetric(data_subset,metric_string);
 			else
 				metric_temp(j) = 0;
 			end%if
