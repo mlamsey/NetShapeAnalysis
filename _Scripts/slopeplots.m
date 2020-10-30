@@ -28,11 +28,11 @@ sep65_shifted = -1 .* [0.0389    0.0731    1.1623    1.9266    1.6969    0.0613 
 sep90_shifted = -1 .* [3.3679    2.2354    2.5307    2.1418   -0.5211   -0.8571   -1.3835   -1.1995   -1.7564];
 
 figure;
-plot(angles,sep25,angles,sep45,angles,sep65,angles,sep90);
+plot(angles,sep45,angles,sep65,angles,sep90);
 grid on;
 xlabel('Torch Angle (degrees)');
-ylabel('Slope (degrees)');
-l = legend({'25^{\circ} Base','45^{\circ} Base','65^{\circ} Base','90^{\circ} Base'});
+ylabel('Deviation (mm)');
+l = legend({'45^{\circ} Base','65^{\circ} Base','90^{\circ} Base'});
 set(l,'location','northeast');
 title('Deviation from CAD Centerline (mm)');
 
@@ -52,6 +52,7 @@ ylabel('Deviation from CAD Centerline (mm)');
 title('Deviation from CAD vs Torch Angle');
 l = legend('25^{\circ}','45^{\circ} 1','45^{\circ} 2','65^{\circ} 1','65^{\circ} 2','90^{\circ} 1','90^{\circ} 2');
 set(l,'location','northeast');
+return;
 
 figure;
 plot(angles,slopes_25,'color',[0.25,1,0],'linestyle','-');
