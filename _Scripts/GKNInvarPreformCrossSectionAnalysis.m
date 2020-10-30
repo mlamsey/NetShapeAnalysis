@@ -113,3 +113,17 @@ if(bool_plot)
 	plot(back_x,back_z,'r');
 	hold off;
 end%if
+
+angles_reduced = [-35,-30,-20,-10,0,10,20,30,35];
+for i = 1:length(angles_reduced)
+	angle_indices = find(angles == angles_reduced(i));
+	front_deviation_reduced(i) = mean(front_overhang_deviation_vector(angle_indices));
+	back_deviation_reduced(i) = mean(back_overhang_deviation_vector(angle_indices));
+end%for i
+
+figure;
+plot(angles_reduced,front_deviation_reduced,'k',angles_reduced,back_deviation_reduced,'r');
+grid on;
+xlabel('Overhang Angle (degrees)');
+ylabel('Average Deviation (mm)');
+legend('Front Deviation','Back Deviation');

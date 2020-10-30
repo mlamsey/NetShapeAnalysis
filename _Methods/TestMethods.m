@@ -55,7 +55,7 @@ classdef TestMethods
 						metric = 0;
 						n_windows_without_points = n_windows_without_points + 1;
 					else
-						metric = AnalysisMethods.QueryMetric(xz_subset.dev,metric_string);
+						metric = SurfaceAnalysisMethods.QueryMetric(xz_subset.dev,metric_string);
 					end%if
 
 					if(metric > metric_threshold)
@@ -75,7 +75,7 @@ classdef TestMethods
 			% Plot
 			f = figure('position',[100,100,400,800]);
 			a = axes('parent',f);
-			surf(flip(x_steps(1:end-1)),z_steps(1:end-1),roughness_values,'parent',a);
+			surf(flip(x_steps(1:end-1)),flip(z_steps(1:end-1)),roughness_values,'parent',a);
 			shading interp;
 			colormap jet;
 			colorbar;
@@ -123,7 +123,7 @@ classdef TestMethods
 						metric = 0;
 						n_windows_without_points = n_windows_without_points + 1;
 					else
-						metric = AnalysisMethods.QueryMetric(xz_subset.dev,metric_string);
+						metric = SurfaceAnalysisMethods.QueryMetric(xz_subset.dev,metric_string);
 					end%if
 
 					if(metric > metric_threshold)
@@ -143,7 +143,7 @@ classdef TestMethods
 			% Plot
 			f = figure('position',[100,100,400,800]);
 			a = axes('parent',f);
-			surf(flip(x_steps(1:end-1)),z_steps(1:end-1),roughness_values,'parent',a);
+			surf(flip(x_steps(1:end-1)),flip(z_steps(1:end-1)),roughness_values,'parent',a);
 			shading interp;
 			colormap jet;
 			colorbar;

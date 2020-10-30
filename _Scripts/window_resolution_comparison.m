@@ -1,15 +1,20 @@
 % Script to generate figures for comparison
 
+if(~exist('s','var'))
+    s = FileTools.PromptForScanImport;
+    ScanMethods.SwitchScanDataAxes(s.data,'y','z');
+end%if
+
 %% TEST 001
 % Various square window sizes
-% close all
-% window_sizes = [2.3,5,10,20];
+close all
+window_sizes = [2.3,5,10,20];
 
-% for i = 1:length(window_sizes)
-% 	% subplot(2,2,i);
-% 	% TestMethods.TestSquareWindows(s,'Rz',window_sizes(i));
-% 	TestMethods.TestRectangularWindows(s,'RzJIS',window_sizes(i),window_sizes(i));
-% end%for i
+for i = 1:length(window_sizes)
+	% subplot(2,2,i);
+	% TestMethods.TestSquareWindows(s,'Rz',window_sizes(i));
+	TestMethods.TestRectangularWindows(s,'Rz',window_sizes(i),window_sizes(i));
+end%for i
 
 %% TEST 002
 % Test raw vs resampled for square windows
@@ -39,11 +44,11 @@
 
 %% TEST 003
 % Various rectangular window sizes
-close all
-window_sizes = [2.3,10,20,50];
+% close all
+% window_sizes = [2.3,10,20,50];
 
-for i = 1:length(window_sizes)
-	% subplot(2,2,i);
-	% TestMethods.TestSquareWindows(s,'Rz',window_sizes(i));
-	TestMethods.TestRectangularWindows(s,'RzJIS',2.3,window_sizes(i));
-end%for i
+% for i = 1:length(window_sizes)
+% 	% subplot(2,2,i);
+% 	% TestMethods.TestSquareWindows(s,'Rz',window_sizes(i));
+% 	TestMethods.TestRectangularWindows(s,'RzJIS',2.3,window_sizes(i));
+% end%for i
