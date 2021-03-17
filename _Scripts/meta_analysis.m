@@ -62,6 +62,9 @@
 
 % -----------------------------------------------------
 
+s = GOMScan('C:\Users\pty883\University of Tennessee\UT_MABE_Welding - Documents\GKN Invar\Scans\GOM\Export\[P] Full Res Tool Mold Surface.asc');
+ScanMethods.SwitchScanDataAxes(s.data,'y','z');
+
 n_deposited_layers = 296;
 mm_removed_bandsaw = 7; % mm, approximate
 
@@ -178,63 +181,74 @@ for i = 1:n_layers
 end%for i
 fprintf('Metrics calculated in %1.3f seconds\n',toc);
 
-subplot(2,5,1)
+% subplot(2,5,1)
+subplot(5,2,1)
 plot(mean_values);
 title('Mean');
 xlabel('Layer Number');
 ylabel('Value (mm)');
 grid on;
-subplot(2,5,2)
+% subplot(2,5,2)
+subplot(5,2,2)
 plot(stddev_values);
 title('Stddev');
 xlabel('Layer Number');
 ylabel('Value (mm)');
 grid on;
-subplot(2,5,3)
+ylim([0,0.3]);
+% subplot(2,5,3)
+subplot(5,2,3)
 plot(Ra_values);
-title('Ra');
+title('W_{a}');
 xlabel('Layer Number');
 ylabel('Value (mm)');
 grid on;
-subplot(2,5,4)
+% subplot(2,5,4)
+subplot(5,2,4)
 plot(Rq_values);
-title('Rq');
+title('W_{q}');
 xlabel('Layer Number');
 ylabel('Value (mm)');
 grid on;
-subplot(2,5,5)
+% subplot(2,5,5)
+subplot(5,2,5)
 plot(Rv_values);
-title('Rv');
+title('W_{v}');
 xlabel('Layer Number');
 ylabel('Value (mm)');
 grid on;
-subplot(2,5,6)
+% subplot(2,5,6)
+subplot(5,2,6)
 plot(Rp_values);
-title('Rp');
+title('W_{p}');
 xlabel('Layer Number');
 ylabel('Value (mm)');
 grid on;
-subplot(2,5,7)
+% subplot(2,5,7)
+subplot(5,2,7)
 plot(Rz_values);
-title('Rz');
+title('W_{z}');
 xlabel('Layer Number');
 ylabel('Value (mm)');
 grid on;
-subplot(2,5,8)
+% subplot(2,5,8)
+subplot(5,2,8)
 plot(Rsk_values);
-title('Rsk');
+title('W_{sk}');
 xlabel('Layer Number');
 ylabel('Value (mm)');
 grid on;
-subplot(2,5,9)
+% subplot(2,5,9)
+subplot(5,2,9)
 plot(Rku_values);
-title('Rku');
+title('W_{ku}');
 xlabel('Layer Number');
 ylabel('Value (mm)');
 grid on;
-subplot(2,5,10)
+% subplot(2,5,10)
+subplot(5,2,10)
 plot(RzJIS_values);
-title('RzJIS');
+title('W_{zJIS}');
 xlabel('Layer Number');
 ylabel('Value (mm)');
 grid on;

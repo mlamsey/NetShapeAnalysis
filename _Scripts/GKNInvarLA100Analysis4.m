@@ -15,8 +15,9 @@ if(~exist('s','var'))
     ScanMethods.SwitchScanDataAxes(s.data,'y','z');
 end%if
 
-f = figure('position',[0,0,1400,800],'name','Resolution Comparison');
-x_step_increments = [2.3,5,10,15,20,30];
+% f = figure('position',[0,0,1400,800],'name','Resolution Comparison');
+% x_step_increments = [2.3,5,10,15,20,30];
+x_step_increments = 2.3;
 for resolution_i = 1:length(x_step_increments)
 
 	% ===== Build Parameters ===== %
@@ -157,7 +158,7 @@ for resolution_i = 1:length(x_step_increments)
 	% ===== Analysis ===== %
 	% ----- Layer-wise ----- %
 	metric_values = zeros(1,n_layers);
-	metric_string = 'Rz';
+	metric_string = 'stddev';
 
 	fprintf('\nCalculating %s for:\n',metric_string);
 	for i = 1:n_layers
@@ -296,7 +297,7 @@ for resolution_i = 1:length(x_step_increments)
 	% ylabel('Metric Value');
 
 	% Error bars
-	subplot(2,3,resolution_i)
+	% subplot(2,3,resolution_i)
 	hold on;
 	errorbar(ga_angles,metric_ga_averages,metric_ga_stddev,'k-o');
 	errorbar(abs(nga_angles),metric_nga_averages,metric_nga_stddev,'r-o');
