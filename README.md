@@ -17,7 +17,7 @@ Software tools for analyzing scans of additively manufactured parts written in M
 
 **Contents of a GOMScan**
 - `data` - the scan data, contained in a GOMScanData object
-- `file_path` - the file path you used
+- `file_path` - the file path you used (included for debugging purposes)
 
 **Contents of a GOMScanData**
 - `x`, `y`, `z` - the position points along the surface
