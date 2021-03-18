@@ -62,7 +62,8 @@
 
 % -----------------------------------------------------
 
-s = GOMScan('C:\Users\pty883\University of Tennessee\UT_MABE_Welding - Documents\GKN Invar\Scans\GOM\Export\[P] Full Res Tool Mold Surface.asc');
+% s = GOMScan('C:\Users\pty883\University of Tennessee\UT_MABE_Welding - Documents\GKN Invar\Scans\GOM\Export\[P] Full Res Tool Mold Surface.asc');
+s = GOMScan('/Users/mlamsey/Documents/MATLAB/welding/NetShapeAnalysis/_Data/[P] Full Res Tool Mold Surface.asc');
 ScanMethods.SwitchScanDataAxes(s.data,'y','z');
 
 n_deposited_layers = 296;
