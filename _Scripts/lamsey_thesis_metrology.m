@@ -1,10 +1,11 @@
 % Lamsey Thesis Analysis
 clc, close all, clear all
-bool_plot = false;
-bool_surf = true;
+bool_plot = true;
+bool_surf = false;
 
 % Import
-la100_scan = GOMScan('/Users/mlamsey/Documents/MATLAB/welding/NetShapeAnalysis/_Data/[P] Full Res Tool Mold Surface.asc');
+% la100_scan = GOMScan('/Users/mlamsey/Documents/MATLAB/welding/NetShapeAnalysis/_Data/[P] Full Res Tool Mold Surface.asc');
+la100_scan = GOMScan('C:\Users\pty883\Documents\MATLAB\ARC\NetShapeAnalysis\_Data\[P] Full Res Tool Mold Surface.asc');
 ScanMethods.SwitchScanDataAxes(la100_scan.data,'y','z');
 
 % Useful Stuff
@@ -14,7 +15,7 @@ z_range = max(la100_scan.data.z) - min(la100_scan.data.z);
 % Configure
 layer_height = 2.31; % mm
 window_height = 20 * layer_height; % based on waviness wavelength = 2*l
-n_horizontal_windows = 100;
+n_horizontal_windows = 50;
 window_width = x_range / n_horizontal_windows;
 
 % Sampling
@@ -72,21 +73,46 @@ for j = 1:length(x_steps) - 1
 	end%for i
 end%for j
 
+mean_vector = zeros(1,length(z_steps)-1);
+stddev_vector = mean_vector;
+Ra_vector = mean_vector;
+Rq_vector = mean_vector;
+Rv_vector = mean_vector;
+Rp_vector = mean_vector;
+Rz_vector = mean_vector;
+Rsk_vector = mean_vector;
+Rku_vector = mean_vector;
+RzJIS_vector = mean_vector;
+
+for i = 1:length(z_steps) - 1
+	mean_vector(i) = mean(mean_values(:,i));
+	stddev_vector(i) = mean(stddev_values(:,i));
+	Ra_vector(i) = mean(Ra_values(:,i));
+	Rq_vector(i) = mean(Rq_values(:,i));
+	Rv_vector(i) = mean(Rv_values(:,i));
+	Rp_vector(i) = mean(Rp_values(:,i));
+	Rz_vector(i) = mean(Rz_values(:,i));
+	Rsk_vector(i) = mean(Rsk_values(:,i));
+	Rku_vector(i) = mean(Rku_values(:,i));
+	RzJIS_vector(i) = mean(RzJIS_values(:,i));
+end%for i
+
 % xlim([min(la100_scan.data.x),max(la100_scan.data.x)]);
 % daspect([1,1,1]);
 
 % Plot
 if(bool_plot)
+	f = figure('units','normalized','position',[0.3,0.1,0.4,0.8]);
 	% subplot(2,5,1)
 	subplot(5,2,1)
-	plot(z_steps(1:end-1),mean_values);
+	plot(z_steps(1:end-1),mean_vector);
 	title('Mean');
 	xlabel('Height (mm)');
 	ylabel('Value (mm)');
 	grid on;
 	% subplot(2,5,2)
 	subplot(5,2,2)
-	plot(z_steps(1:end-1),stddev_values);
+	plot(z_steps(1:end-1),stddev_vector);
 	title('Stddev');
 	xlabel('Height (mm)');
 	ylabel('Value (mm)');
@@ -94,56 +120,56 @@ if(bool_plot)
 	% ylim([0,0.3]);
 	% subplot(2,5,3)
 	subplot(5,2,3)
-	plot(z_steps(1:end-1),Ra_values);
+	plot(z_steps(1:end-1),Ra_vector);
 	title('W_{a}');
 	xlabel('Height (mm)');
 	ylabel('Value (mm)');
 	grid on;
 	% subplot(2,5,4)
 	subplot(5,2,4)
-	plot(z_steps(1:end-1),Rq_values);
+	plot(z_steps(1:end-1),Rq_vector);
 	title('W_{q}');
 	xlabel('Height (mm)');
 	ylabel('Value (mm)');
 	grid on;
 	% subplot(2,5,5)
 	subplot(5,2,5)
-	plot(z_steps(1:end-1),Rv_values);
+	plot(z_steps(1:end-1),Rv_vector);
 	title('W_{v}');
 	xlabel('Height (mm)');
 	ylabel('Value (mm)');
 	grid on;
 	% subplot(2,5,6)
 	subplot(5,2,6)
-	plot(z_steps(1:end-1),Rp_values);
+	plot(z_steps(1:end-1),Rp_vector);
 	title('W_{p}');
 	xlabel('Height (mm)');
 	ylabel('Value (mm)');
 	grid on;
 	% subplot(2,5,7)
 	subplot(5,2,7)
-	plot(z_steps(1:end-1),Rz_values);
+	plot(z_steps(1:end-1),Rz_vector);
 	title('W_{z}');
 	xlabel('Height (mm)');
 	ylabel('Value (mm)');
 	grid on;
 	% subplot(2,5,8)
 	subplot(5,2,8)
-	plot(z_steps(1:end-1),Rsk_values);
+	plot(z_steps(1:end-1),Rsk_vector);
 	title('W_{sk}');
 	xlabel('Height (mm)');
 	ylabel('Value (mm)');
 	grid on;
 	% subplot(2,5,9)
 	subplot(5,2,9)
-	plot(z_steps(1:end-1),Rku_values);
+	plot(z_steps(1:end-1),Rku_vector);
 	title('W_{ku}');
 	xlabel('Height (mm)');
 	ylabel('Value (mm)');
 	grid on;
 	% subplot(2,5,10)
 	subplot(5,2,10)
-	plot(z_steps(1:end-1),RzJIS_values);
+	plot(z_steps(1:end-1),RzJIS_vector);
 	title('W_{zJIS}');
 	xlabel('Height (mm)');
 	ylabel('Value (mm)');
